@@ -3,8 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1e1b4b" />
   <title>Lumart — Art Supplies</title>
   <meta name="description" content="Gere cotações profissionais de materiais artísticos e envie via WhatsApp." />
+
+  <!-- Open Graph / Social -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Lumart — Art Supplies" />
+  <meta property="og:description" content="Gere cotações profissionais de materiais artísticos e envie via WhatsApp." />
+  <meta property="og:locale" content="pt_MZ" />
+  <meta name="twitter:card" content="summary" />
+
+  <!-- Favicon SVG inline -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%231e1b4b%22/><text x=%2250%25%22 y=%2256%25%22 font-family=%22Arial%22 font-size=%2218%22 font-weight=%22bold%22 fill=%22%23ffdc50%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>L</text></svg>" />
 
   <!-- Fontes Google -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -82,9 +93,9 @@
     <div class="secao-cotacao ativo">
 
       <!-- Voltar -->
-      <div class="cotacao-voltar" onclick="irParaCatalogo()">
+      <button type="button" class="cotacao-voltar" onclick="irParaCatalogo()">
         ← Voltar ao catálogo
-      </div>
+      </button>
 
       <h1 class="cotacao-titulo display">Finalizar Cotação</h1>
       <p class="cotacao-subtitulo">Preencha seus dados para gerar o PDF ou enviar direto para nossa equipe.</p>
@@ -102,7 +113,16 @@
 
         <div class="campo">
           <label for="input-telefone">WhatsApp / Telefone</label>
-          <input type="tel" id="input-telefone" placeholder="(+258) 84 000 0000" autocomplete="tel" />
+          <input
+            type="tel"
+            id="input-telefone"
+            placeholder="(+258) 84 000 0000"
+            autocomplete="tel"
+            inputmode="tel"
+            pattern="^\+?258?\s?8[0-9]\s?\d{3}\s?\d{4}$"
+            aria-describedby="ajuda-telefone"
+          />
+          <small id="ajuda-telefone" class="campo-ajuda">Formato: +258 8X XXX XXXX</small>
         </div>
 
         <div class="campo">
@@ -233,12 +253,16 @@
     const container = document.getElementById("lista-filtros");
     if (!container) return;
 
-    container.innerHTML = CATEGORIAS.map((cat) => `
+    container.innerHTML = CATEGORIAS.map((cat) => {
+      const safe = escaparHTML(cat);
+      return `
       <button
+        type="button"
         class="btn-filtro ${cat === categoriaActiva ? "ativo" : ""}"
-        onclick="filtrarPor('${cat}')"
-      >${cat}</button>
-    `).join("");
+        onclick="filtrarPor('${safe.replace(/'/g, "\\'")}')"
+      >${safe}</button>
+    `;
+    }).join("");
   }
 
   function filtrarPor(categoria) {
@@ -261,28 +285,35 @@
       return;
     }
 
-    grid.innerHTML = lista.map((prod, i) => `
+    grid.innerHTML = lista.map((prod, i) => {
+      const nome = escaparHTML(prod.nome);
+      const marca = escaparHTML(prod.marca);
+      const imagem = escaparHTML(prod.imagem);
+      const noCarrinho = !!carrinho.find(item => item.id === prod.id);
+      return `
       <article class="card-produto" style="animation-delay:${i * 50}ms">
         <img
           class="card-imagem"
-          src="${prod.imagem}"
-          alt="${prod.nome}"
+          src="${imagem}"
+          alt="${nome}"
           loading="lazy"
-          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 160%22><rect fill=%22%23e2e8f0%22 width=%22200%22 height=%22160%22/><text fill=%22%2394a3b8%22 x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-size=%2232%22>🎨</text></svg>'"
+          onerror="imgErro(this)"
         />
         <div class="card-corpo">
           ${prod.destaque ? '<span class="card-badge-destaque">⭐ Destaque</span>' : ''}
-          <p class="card-marca">${prod.marca}</p>
-          <h3 class="card-nome">${prod.nome}</h3>
+          <p class="card-marca">${marca}</p>
+          <h3 class="card-nome">${nome}</h3>
           <p class="card-preco">${formatarMZN(prod.preco)}</p>
           <button
-            class="btn-adicionar ${carrinho.find(i => i.id === prod.id) ? 'no-carrinho' : ''}"
+            type="button"
+            class="btn-adicionar ${noCarrinho ? 'no-carrinho' : ''}"
             data-id="${prod.id}"
             onclick="adicionarAoCarrinho(${prod.id})"
-          >${carrinho.find(i => i.id === prod.id) ? '✓ Adicionado' : '+ Adicionar'}</button>
+          >${noCarrinho ? '✓ Adicionado' : '+ Adicionar'}</button>
         </div>
       </article>
-    `).join("");
+    `;
+    }).join("");
   }
 
   // ── Renderizar resumo da cotação (formulário) ─────────────────
@@ -297,21 +328,26 @@
       return;
     }
 
-    container.innerHTML = carrinho.map((item) => `
+    container.innerHTML = carrinho.map((item) => {
+      const nome = escaparHTML(item.nome);
+      const imagem = escaparHTML(item.imagem);
+      return `
       <div class="resumo-produto">
         <img
           class="resumo-prod-icone"
-          src="${item.imagem}"
-          alt="${item.nome}"
-          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22><rect fill=%22%23e2e8f0%22 width=%2236%22 height=%2236%22/></svg>'"
+          src="${imagem}"
+          alt="${nome}"
+          loading="lazy"
+          onerror="imgErro(this)"
         />
         <div class="resumo-prod-info">
-          <div class="resumo-prod-nome">${item.nome}</div>
+          <div class="resumo-prod-nome">${nome}</div>
           <div class="resumo-prod-qtd">Qtd: ${item.qtd}</div>
         </div>
         <div class="resumo-prod-preco">${formatarMZN(item.preco * item.qtd)}</div>
       </div>
-    `).join("");
+    `;
+    }).join("");
 
     if (totalEl) totalEl.textContent = formatarMZN(calcularTotal());
   }

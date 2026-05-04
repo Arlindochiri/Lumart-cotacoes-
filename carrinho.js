@@ -166,22 +166,24 @@ function renderizarCarrinhoModal() {
   }
 
   lista.innerHTML = carrinho
-    .map(
-      (item) => `
+    .map((item) => {
+      const nome = escaparHTML(item.nome);
+      const imagem = escaparHTML(item.imagem);
+      return `
     <div class="item-carrinho" id="item-${item.id}">
-      <img src="${item.imagem}" alt="${item.nome}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 80%22><rect fill=%22%23e2e8f0%22 width=%2280%22 height=%2280%22/></svg>'" />
+      <img src="${imagem}" alt="${nome}" loading="lazy" onerror="imgErro(this)" />
       <div class="item-info">
-        <span class="item-nome">${item.nome}</span>
+        <span class="item-nome">${nome}</span>
         <span class="item-preco">${formatarMZN(item.preco)}</span>
       </div>
       <div class="item-controles">
-        <button class="btn-qtd" onclick="alterarQuantidade(${item.id}, -1)">−</button>
+        <button class="btn-qtd" onclick="alterarQuantidade(${item.id}, -1)" aria-label="Diminuir quantidade">−</button>
         <span class="item-qtd">${item.qtd}</span>
-        <button class="btn-qtd" onclick="alterarQuantidade(${item.id}, 1)">+</button>
+        <button class="btn-qtd" onclick="alterarQuantidade(${item.id}, 1)" aria-label="Aumentar quantidade">+</button>
       </div>
-      <button class="btn-remover" onclick="removerDoCarrinho(${item.id})" title="Remover">✕</button>
-    </div>`
-    )
+      <button class="btn-remover" onclick="removerDoCarrinho(${item.id})" aria-label="Remover ${nome}">✕</button>
+    </div>`;
+    })
     .join("");
 
   if (totalEl) totalEl.textContent = formatarMZN(calcularTotal());
@@ -193,6 +195,9 @@ function mostrarToast(mensagem) {
   if (!toast) {
     toast = document.createElement("div");
     toast.id = "toast";
+    toast.setAttribute("role", "status");
+    toast.setAttribute("aria-live", "polite");
+    toast.setAttribute("aria-atomic", "true");
     document.body.appendChild(toast);
   }
   toast.textContent = mensagem;

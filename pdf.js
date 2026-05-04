@@ -3,9 +3,19 @@
 //  Usa jsPDF via CDN para criar cotações profissionais.
 // ============================================================
 
-// Número de cotação aleatório (baseado em timestamp)
+// Número de cotação cacheado por sessão (mesmo número no preview, PDF e WhatsApp)
+let _numeroCotacaoCache = null;
 function gerarNumeroCotacao() {
-  return "#" + (Math.floor(Date.now() / 1000) % 10000).toString().padStart(4, "0");
+  if (_numeroCotacaoCache) return _numeroCotacaoCache;
+  const buffer = new Uint16Array(1);
+  (window.crypto || window.msCrypto).getRandomValues(buffer);
+  _numeroCotacaoCache = "#" + (buffer[0] % 10000).toString().padStart(4, "0");
+  return _numeroCotacaoCache;
+}
+
+// Resetar número (após envio bem-sucedido)
+function resetarNumeroCotacao() {
+  _numeroCotacaoCache = null;
 }
 
 // Data formatada em pt-MZ
@@ -15,6 +25,21 @@ function dataFormatada() {
     month: "2-digit",
     year: "numeric",
   });
+}
+
+// Marcar campo como inválido (visual + acessibilidade)
+function marcarErro(el, mensagem) {
+  if (!el) return;
+  el.classList.add("erro");
+  el.setAttribute("aria-invalid", "true");
+  el.focus();
+  mostrarToast(mensagem);
+}
+
+function limparErro(el) {
+  if (!el) return;
+  el.classList.remove("erro");
+  el.removeAttribute("aria-invalid");
 }
 
 // Validar formulário antes de gerar PDF
@@ -28,12 +53,16 @@ function validarFormulario() {
   for (const campo of campos) {
     const el = document.getElementById(campo.id);
     if (!el || !el.value.trim()) {
-      el?.classList.add("erro");
-      el?.focus();
-      mostrarToast(`Preencha o campo: ${campo.label}`);
+      marcarErro(el, `Preencha o campo: ${campo.label}`);
       return false;
     }
-    el.classList.remove("erro");
+    limparErro(el);
+  }
+
+  const inputTel = document.getElementById("input-telefone");
+  if (inputTel && !validarTelefone(inputTel.value)) {
+    marcarErro(inputTel, "Telefone inválido. Use o formato +258 8X XXX XXXX.");
+    return false;
   }
 
   if (carrinho.length === 0) {
@@ -242,7 +271,7 @@ function criarPDF(cliente, numeroCotacao, salvar = true) {
   doc.text("Elevating artistic commerce", W - margem, 290, { align: "right" });
 
   if (salvar) {
-    const nomeArquivo = `Lumart_Cotacao_${numeroCotacao.replace("#", "")}_${cliente.nome.replace(/\s+/g, "_")}.pdf`;
+    const nomeArquivo = `Lumart_Cotacao_${numeroCotacao.replace("#", "")}_${sanitizarNomeArquivo(cliente.nome)}.pdf`;
     doc.save(nomeArquivo);
   }
 

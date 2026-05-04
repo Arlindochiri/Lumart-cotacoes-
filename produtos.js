@@ -102,7 +102,43 @@ const CATEGORIAS = ["Todos", ...new Set(PRODUTOS.map((p) => p.categoria))];
 // Número WhatsApp da loja (com código do país, sem espaços ou símbolos)
 const WHATSAPP_NUMERO = "258878237402"; // ← Altere para o número real
 
+// Placeholder usado quando uma imagem falha ao carregar
+const PLACEHOLDER_IMG =
+  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 160"><rect fill="%23e2e8f0" width="200" height="160"/><text fill="%2394a3b8" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle" font-size="32">🎨</text></svg>';
+
 // Formatar valor em Metical (MZN)
 function formatarMZN(valor) {
   return "MZN " + valor.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+// Escapar caracteres especiais antes de inserir em innerHTML
+function escaparHTML(str) {
+  return String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// Limpar nome de arquivo (remove / \ : * ? " < > | etc.)
+function sanitizarNomeArquivo(nome) {
+  const limpo = String(nome ?? "")
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^A-Za-z0-9_-]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+  return limpo || "cliente";
+}
+
+// Validar número de telefone (Moçambique: 9 dígitos começando com 8, com ou sem +258)
+function validarTelefone(tel) {
+  const digitos = String(tel ?? "").replace(/\D/g, "");
+  return /^(258)?8\d{8}$/.test(digitos);
+}
+
+// Handler global para imagens que não carregam
+function imgErro(el) {
+  el.onerror = null;
+  el.src = PLACEHOLDER_IMG;
 }
