@@ -1,0 +1,16 @@
+<!-- Header reutilizável — usa {{base}} que é substituído por components.js -->
+<header class="header">
+  <nav class="nav">
+    <a class="nav-logo" href="{{base}}/index.html">
+      Lu<span>mart</span>
+    </a>
+    <div class="nav-acoes">
+      <a class="nav-link" href="{{base}}/index.html">Catálogo</a>
+      <a class="nav-link" href="#" onclick="if(typeof irParaFormulario==='function'){irParaFormulario();}else{location.href='{{base}}/index.html#cotacao';}return false;">Cotação</a>
+      <button class="btn-carrinho" onclick="abrirCarrinho()" aria-label="Ver carrinho">
+        🛒
+        <span class="badge-carrinho" id="badge-carrinho">0</span>
+      </button>
+    </div>
+  </nav>
+</header>
