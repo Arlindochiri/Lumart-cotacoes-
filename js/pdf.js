@@ -22,12 +22,16 @@ function validarFormulario() {
   const campos = [
     { id: "input-nome", label: "Nome completo" },
     { id: "input-telefone", label: "Telefone" },
-    { id: "input-endereco", label: "Endereço de entrega" },
+    { id: "input-pais", label: "País" },
+    { id: "input-cidade", label: "Cidade" },
+    { id: "input-provincia", label: "Província/Distrito" },
+    { id: "input-bairro", label: "Bairro" },
   ];
 
   for (const campo of campos) {
     const el = document.getElementById(campo.id);
-    if (!el || !el.value.trim()) {
+    const valor = (el?.value || "").trim();
+    if (!valor) {
       el?.classList.add("erro");
       el?.focus();
       mostrarToast(`Preencha o campo: ${campo.label}`);
@@ -44,13 +48,26 @@ function validarFormulario() {
   return true;
 }
 
-// Obter dados do formulário
+// Obter dados do formulário (envio + observações)
 function obterDadosCliente() {
+  const v = (id) => (document.getElementById(id)?.value || "").trim();
+  const enderecoCompleto = [
+    v("input-bairro"),
+    v("input-cidade"),
+    v("input-provincia"),
+    v("input-pais"),
+  ].filter(Boolean).join(", ");
+
   return {
-    nome: document.getElementById("input-nome")?.value.trim() || "",
-    telefone: document.getElementById("input-telefone")?.value.trim() || "",
-    endereco: document.getElementById("input-endereco")?.value.trim() || "",
-    observacoes: document.getElementById("input-obs")?.value.trim() || "",
+    nome: v("input-nome"),
+    telefone: v("input-telefone"),
+    pais: v("input-pais"),
+    cidade: v("input-cidade"),
+    provincia: v("input-provincia"),
+    bairro: v("input-bairro"),
+    referencia: v("input-referencia"),
+    endereco: enderecoCompleto,
+    observacoes: v("input-obs"),
   };
 }
 
@@ -99,8 +116,9 @@ function criarPDF(cliente, numeroCotacao, salvar = true) {
   y = 52;
 
   // ── Dados do Cliente ───────────────────────────────────────
+  const blocoH = cliente.observacoes ? 56 : 50;
   doc.setFillColor(245, 245, 252);
-  doc.roundedRect(margem, y - 6, W - margem * 2, 38, 3, 3, "F");
+  doc.roundedRect(margem, y - 6, W - margem * 2, blocoH, 3, 3, "F");
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
@@ -118,7 +136,8 @@ function criarPDF(cliente, numeroCotacao, salvar = true) {
   const dadosLinhas = [
     [`Nome:`, cliente.nome],
     [`Telefone:`, cliente.telefone],
-    [`Endereço:`, cliente.endereco],
+    [`Endereço:`, cliente.endereco || "—"],
+    [`Referência:`, cliente.referencia || "—"],
   ];
 
   dadosLinhas.forEach(([label, valor], i) => {
@@ -126,17 +145,18 @@ function criarPDF(cliente, numeroCotacao, salvar = true) {
     doc.setFont("helvetica", "bold");
     doc.text(label, margem + 4, ly);
     doc.setFont("helvetica", "normal");
-    doc.text(valor, margem + 26, ly);
+    const valorMax = String(valor).length > 70 ? String(valor).substring(0, 67) + "…" : valor;
+    doc.text(valorMax, margem + 28, ly);
   });
 
+  y += 44;
+
   if (cliente.observacoes) {
-    y += 48;
     doc.setFont("helvetica", "italic");
     doc.setFontSize(8.5);
     doc.setTextColor(100, 100, 130);
     doc.text(`Obs: ${cliente.observacoes}`, margem + 4, y);
-  } else {
-    y += 42;
+    y += 6;
   }
 
   y += 8;
@@ -166,13 +186,13 @@ function criarPDF(cliente, numeroCotacao, salvar = true) {
     doc.setFontSize(8.5);
     doc.setTextColor(40, 40, 60);
 
-    // Nome (truncar se muito longo)
+    const precoUnit = precoComDesconto(item);
     const nomeMax = item.nome.length > 44 ? item.nome.substring(0, 41) + "…" : item.nome;
     doc.text(nomeMax, margem + 4, y + 6);
     doc.text(String(item.qtd), margem + 98, y + 6, { align: "center" });
-    doc.text(formatarMZN(item.preco), margem + 124, y + 6, { align: "center" });
+    doc.text(formatarMZN(precoUnit), margem + 124, y + 6, { align: "center" });
     doc.setFont("helvetica", "bold");
-    doc.text(formatarMZN(item.preco * item.qtd), W - margem - 4, y + 6, { align: "right" });
+    doc.text(formatarMZN(precoUnit * item.qtd), W - margem - 4, y + 6, { align: "right" });
 
     y += 9;
   });
@@ -182,6 +202,21 @@ function criarPDF(cliente, numeroCotacao, salvar = true) {
   doc.setLineWidth(0.3);
   doc.line(margem, y + 2, W - margem, y + 2);
 
+  y += 6;
+
+  // ── Subtotal e Frete ───────────────────────────────────────
+  const subtotal = calcularSubtotal();
+  const frete = calcularFrete();
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(80, 80, 100);
+  doc.text("Subtotal:", W - margem - 50, y + 5, { align: "right" });
+  doc.text(formatarMZN(subtotal), W - margem - 4, y + 5, { align: "right" });
+  y += 6;
+
+  doc.text("Frete:", W - margem - 50, y + 5, { align: "right" });
+  doc.text(frete > 0 ? formatarMZN(frete) : "A combinar", W - margem - 4, y + 5, { align: "right" });
   y += 8;
 
   // ── Total ──────────────────────────────────────────────────
@@ -196,7 +231,7 @@ function criarPDF(cliente, numeroCotacao, salvar = true) {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(13);
   doc.setTextColor(255, 220, 80);
-  doc.text(formatarMZN(calcularTotal()), W - margem - 4, y + 11.5, { align: "right" });
+  doc.text(formatarMZN(subtotal + frete), W - margem - 4, y + 11.5, { align: "right" });
 
   y += 22;
 
@@ -269,17 +304,42 @@ function acaoEnviarWhatsApp() {
 
   // Montar mensagem
   const linhasProdutos = carrinho
-    .map((i) => `  • ${i.nome} × ${i.qtd} — ${formatarMZN(i.preco * i.qtd)}`)
+    .map((i) => `  • ${i.nome} × ${i.qtd} — ${formatarMZN(precoComDesconto(i) * i.qtd)}`)
     .join("\n");
+
+  const subtotal = calcularSubtotal();
+  const frete = calcularFrete();
+  const total = subtotal + frete;
 
   const mensagem =
     `Olá! Meu nome é *${cliente.nome}* e gostaria de confirmar a minha cotação ${numCotacao}.\n\n` +
     `*Produtos:*\n${linhasProdutos}\n\n` +
-    `*Total estimado: ${formatarMZN(calcularTotal())}*\n\n` +
+    `*Subtotal:* ${formatarMZN(subtotal)}\n` +
+    `*Frete:* ${frete > 0 ? formatarMZN(frete) : "a combinar"}\n` +
+    `*Total estimado:* ${formatarMZN(total)}\n\n` +
     `📍 Entrega: ${cliente.endereco}\n` +
+    (cliente.referencia ? `🧭 Referência: ${cliente.referencia}\n` : "") +
     (cliente.observacoes ? `📝 Obs: ${cliente.observacoes}\n\n` : "\n") +
     `_Segue em anexo o PDF da cotação._`;
 
   const urlWA = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensagem)}`;
   window.open(urlWA, "_blank");
+}
+
+// ─── Checkout direto pelo carrinho (sem PDF, mensagem rápida) ──
+function checkoutWhatsAppCarrinho() {
+  if (carrinho.length === 0) {
+    mostrarToast("Adicione pelo menos um produto antes de continuar.");
+    return;
+  }
+  const linhas = carrinho
+    .map((i) => `  • ${i.nome} × ${i.qtd} — ${formatarMZN(precoComDesconto(i) * i.qtd)}`)
+    .join("\n");
+  const subtotal = calcularSubtotal();
+  const mensagem =
+    `Olá Lumart! Gostaria de comprar os seguintes produtos:\n\n` +
+    `${linhas}\n\n` +
+    `*Subtotal:* ${formatarMZN(subtotal)}\n\n` +
+    `Aguardo confirmação e cálculo do frete. Obrigado!`;
+  window.open(`https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensagem)}`, "_blank");
 }

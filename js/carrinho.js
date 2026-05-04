@@ -29,20 +29,20 @@ function salvarCarrinho() {
 }
 
 // Adicionar produto (ou incrementar quantidade)
-function adicionarAoCarrinho(produtoId) {
-  const produto = PRODUTOS.find((p) => p.id === produtoId);
+function adicionarAoCarrinho(produtoId, qtd = 1) {
+  const produto = PRODUTOS.find((p) => p.id === Number(produtoId));
   if (!produto) return;
 
-  const existente = carrinho.find((item) => item.id === produtoId);
+  const existente = carrinho.find((item) => item.id === produto.id);
   if (existente) {
-    existente.qtd += 1;
+    existente.qtd += qtd;
   } else {
-    carrinho.push({ ...produto, qtd: 1 });
+    carrinho.push({ ...produto, qtd });
   }
 
   salvarCarrinho();
   atualizarUI();
-  mostrarToast(`${produto.nome} adicionado à cotação`);
+  mostrarToast(`${produto.nome} adicionado ao carrinho`);
 }
 
 // Remover produto completamente
@@ -76,9 +76,19 @@ function limparCarrinho() {
   atualizarUI();
 }
 
-// Total da cotação
+// Subtotal (sem frete) — considerando descontos
+function calcularSubtotal() {
+  return carrinho.reduce((acc, item) => acc + precoComDesconto(item) * item.qtd, 0);
+}
+
+// Frete (calculado por shipping.js, com fallback 0)
+function calcularFrete() {
+  return typeof obterValorFrete === "function" ? obterValorFrete() : 0;
+}
+
+// Total da cotação (subtotal + frete)
 function calcularTotal() {
-  return carrinho.reduce((acc, item) => acc + item.preco * item.qtd, 0);
+  return calcularSubtotal() + calcularFrete();
 }
 
 // Total de itens
@@ -91,7 +101,8 @@ function atualizarUI() {
   atualizarBadgeCarrinho();
   atualizarBarraInferior();
   atualizarBotoesAdicionados();
-  if (document.getElementById("secao-cotacao")?.classList.contains("ativo")) {
+  const cotacao = document.getElementById("secao-cotacao");
+  if (cotacao && cotacao.classList.contains("ativo") && typeof renderizarResumoFinal === "function") {
     renderizarResumoFinal();
   }
 }
@@ -166,25 +177,30 @@ function renderizarCarrinhoModal() {
   }
 
   lista.innerHTML = carrinho
-    .map(
-      (item) => `
+    .map((item) => {
+      const precoUnit = precoComDesconto(item);
+      const temDesconto = (item.desconto || 0) > 0;
+      return `
     <div class="item-carrinho" id="item-${item.id}">
       <img src="${item.imagem}" alt="${item.nome}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 80%22><rect fill=%22%23e2e8f0%22 width=%2280%22 height=%2280%22/></svg>'" />
       <div class="item-info">
         <span class="item-nome">${item.nome}</span>
-        <span class="item-preco">${formatarMZN(item.preco)}</span>
+        <span class="item-preco">
+          ${temDesconto ? `<s class="text-muted small me-1">${formatarMZN(item.preco)}</s>` : ""}
+          ${formatarMZN(precoUnit)}
+        </span>
       </div>
       <div class="item-controles">
-        <button class="btn-qtd" onclick="alterarQuantidade(${item.id}, -1)">−</button>
+        <button class="btn-qtd" onclick="alterarQuantidade(${item.id}, -1)" aria-label="Diminuir quantidade">−</button>
         <span class="item-qtd">${item.qtd}</span>
-        <button class="btn-qtd" onclick="alterarQuantidade(${item.id}, 1)">+</button>
+        <button class="btn-qtd" onclick="alterarQuantidade(${item.id}, 1)" aria-label="Aumentar quantidade">+</button>
       </div>
-      <button class="btn-remover" onclick="removerDoCarrinho(${item.id})" title="Remover">✕</button>
-    </div>`
-    )
+      <button class="btn-remover" onclick="removerDoCarrinho(${item.id})" title="Remover" aria-label="Remover">✕</button>
+    </div>`;
+    })
     .join("");
 
-  if (totalEl) totalEl.textContent = formatarMZN(calcularTotal());
+  if (totalEl) totalEl.textContent = formatarMZN(calcularSubtotal());
 }
 
 // ─── Toast de feedback ────────────────────────────────────────
