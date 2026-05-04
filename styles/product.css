@@ -1,0 +1,296 @@
+/* ============================================================
+   LUMART — Página individual de Produto
+   ============================================================ */
+
+.produto-pagina {
+  min-height: 70vh;
+  padding-bottom: 60px;
+}
+
+.produto-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  margin-bottom: 48px;
+}
+
+@media (min-width: 900px) {
+  .produto-grid {
+    grid-template-columns: 1.2fr 1fr;
+    gap: 48px;
+  }
+}
+
+/* ── Galeria ───────────────────────────────────────────────── */
+.produto-galeria {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.galeria-principal {
+  background: var(--slate-100);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  cursor: zoom-in;
+  position: relative;
+}
+
+.galeria-principal img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+}
+
+.galeria-thumbs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.thumb {
+  background: var(--slate-100);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  cursor: pointer;
+  border: 2px solid transparent;
+  padding: 0;
+  transition: border-color var(--transition), transform var(--transition);
+}
+.thumb img { width: 100%; height: 100%; object-fit: cover; }
+.thumb:hover { transform: scale(1.04); }
+.thumb.ativo { border-color: var(--indigo-600); }
+
+/* ── Info do produto ───────────────────────────────────────── */
+.produto-info { display: flex; flex-direction: column; gap: 14px; }
+
+.produto-marca {
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--slate-500);
+  font-weight: 600;
+  margin: 0;
+}
+
+.produto-nome {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  line-height: 1.2;
+  color: var(--slate-900);
+  margin: 0;
+}
+
+@media (min-width: 640px) { .produto-nome { font-size: 2.1rem; } }
+
+.produto-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .9rem;
+  color: var(--slate-600);
+}
+.stars { color: var(--amber-400); letter-spacing: 1px; }
+.rating-num { font-weight: 700; color: var(--slate-900); }
+.rating-count { color: var(--slate-500); }
+
+.produto-precos {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.produto-preco {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--indigo-600);
+}
+.produto-preco-antigo {
+  font-size: 1.1rem;
+  color: var(--slate-400);
+  text-decoration: line-through;
+}
+.produto-badge-desconto {
+  background: var(--red-500);
+  color: var(--white);
+  font-weight: 700;
+  font-size: .8rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.produto-descricao {
+  font-size: .95rem;
+  line-height: 1.7;
+  color: var(--slate-700);
+  margin: 6px 0 4px;
+}
+
+/* Quantidade */
+.produto-qtd-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.produto-qtd-wrap label {
+  font-weight: 600;
+  font-size: .85rem;
+  color: var(--slate-700);
+}
+.qtd-controles {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  width: fit-content;
+  overflow: hidden;
+}
+.qtd-controles .btn-qtd {
+  width: 38px; height: 38px;
+  border-radius: 0;
+  background: var(--white);
+}
+.qtd-controles .btn-qtd:hover { background: var(--indigo-100); }
+.qtd-controles input {
+  width: 56px;
+  text-align: center;
+  border: none;
+  font-weight: 700;
+  font-size: 1rem;
+  outline: none;
+}
+
+/* Acções */
+.produto-acoes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+@media (min-width: 540px) {
+  .produto-acoes { flex-direction: row; }
+  .produto-acoes .btn { flex: 1; }
+}
+
+/* ── Secções ──────────────────────────────────────────────── */
+.produto-secao {
+  margin-bottom: 48px;
+}
+.secao-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: var(--slate-900);
+  margin-bottom: 22px;
+  border-bottom: 2px solid var(--indigo-100);
+  padding-bottom: 10px;
+}
+
+/* Vídeo */
+.produto-video-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  background: var(--slate-900);
+}
+.produto-video-wrap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ── Reviews ──────────────────────────────────────────────── */
+.reviews-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+.review-item {
+  background: var(--white);
+  border: 1px solid var(--slate-100);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  box-shadow: var(--shadow-sm);
+}
+.review-cab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.review-data {
+  margin-left: auto;
+  font-size: .8rem;
+  color: var(--slate-400);
+}
+.review-comentario {
+  font-size: .9rem;
+  color: var(--slate-700);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.form-review {
+  background: var(--slate-50);
+  border: 1px solid var(--slate-100);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+}
+.form-review h3 {
+  font-size: 1.05rem;
+  margin-bottom: 14px;
+  color: var(--indigo-700, var(--indigo-800));
+}
+.form-review .campo { margin-bottom: 14px; }
+.form-review label {
+  display: block;
+  font-weight: 600;
+  font-size: .85rem;
+  color: var(--slate-700);
+  margin-bottom: 6px;
+}
+.form-review input[type="text"],
+.form-review textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  font-size: .9rem;
+  outline: none;
+  transition: border-color var(--transition);
+}
+.form-review input:focus, .form-review textarea:focus {
+  border-color: var(--indigo-500);
+}
+
+.rating-input {
+  display: flex;
+  gap: 4px;
+}
+.star-btn {
+  font-size: 1.6rem;
+  color: var(--slate-300);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color var(--transition), transform var(--transition);
+}
+.star-btn.ativo, .star-btn:hover { color: var(--amber-400); transform: scale(1.1); }
+
+/* ── Relacionados ─────────────────────────────────────────── */
+.relacionados-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+@media (min-width: 700px) { .relacionados-grid { grid-template-columns: repeat(4, 1fr); } }

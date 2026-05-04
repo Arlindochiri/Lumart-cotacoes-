@@ -1,6 +1,7 @@
 // ============================================================
 //  LUMART — Catálogo de Produtos
-//  Adicione, edite ou remova produtos aqui.
+//  Cada produto pode ter: galeria de imagens, vídeo, desconto,
+//  descrição e produtos relacionados.
 // ============================================================
 
 const PRODUTOS = [
@@ -10,7 +11,16 @@ const PRODUTOS = [
     marca: "Winsor & Newton",
     categoria: "Aquarelas",
     preco: 289.90,
-    imagem: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&q=80",
+    desconto: 15,
+    imagem: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800&q=80",
+    galeria: [
+      "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1200&q=80",
+      "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=1200&q=80",
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&q=80",
+      "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=1200&q=80",
+    ],
+    video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    descricao: "Estojo profissional com 24 pastilhas de aquarela de alta pigmentação. Cores vibrantes, excelente diluição e durabilidade. Ideal para artistas profissionais e estudantes avançados.",
     destaque: true,
   },
   {
@@ -19,7 +29,16 @@ const PRODUTOS = [
     marca: "Keramik",
     categoria: "Pincéis",
     preco: 85.50,
-    imagem: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&q=80",
+    desconto: 0,
+    imagem: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&q=80",
+    galeria: [
+      "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=1200&q=80",
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&q=80",
+      "https://images.unsplash.com/photo-1604147706283-d7119b5b822c?w=1200&q=80",
+      "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1200&q=80",
+    ],
+    video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    descricao: "Conjunto com 5 pincéis sintéticos imitando pelo de marta. Cabos longos ergonómicos, ferro inoxidável. Ideal para aquarela e acrílico em camadas finas.",
     destaque: false,
   },
   {
@@ -28,7 +47,16 @@ const PRODUTOS = [
     marca: "Souza",
     categoria: "Telas",
     preco: 42.90,
-    imagem: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&q=80",
+    desconto: 0,
+    imagem: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80",
+    galeria: [
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&q=80",
+      "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1200&q=80",
+      "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=1200&q=80",
+      "https://images.unsplash.com/photo-1604147706283-d7119b5b822c?w=1200&q=80",
+    ],
+    video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    descricao: "Tela 100% algodão com tratamento triplo, painel rígido. Pronta para óleo, acrílico e técnicas mistas.",
     destaque: false,
   },
   {
@@ -37,7 +65,16 @@ const PRODUTOS = [
     marca: "Corfix",
     categoria: "Tintas",
     preco: 22.00,
-    imagem: "https://images.unsplash.com/photo-1580748141549-71748dbe0bdc?w=400&q=80",
+    desconto: 10,
+    imagem: "https://images.unsplash.com/photo-1580748141549-71748dbe0bdc?w=800&q=80",
+    galeria: [
+      "https://images.unsplash.com/photo-1580748141549-71748dbe0bdc?w=1200&q=80",
+      "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=1200&q=80",
+      "https://images.unsplash.com/photo-1604147706283-d7119b5b822c?w=1200&q=80",
+      "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1200&q=80",
+    ],
+    video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    descricao: "Tinta a óleo clássica em bisnaga 37ml. Cobertura excelente, secagem média, acabamento acetinado.",
     destaque: false,
   },
   {
@@ -46,7 +83,16 @@ const PRODUTOS = [
     marca: "Canson",
     categoria: "Cadernos",
     preco: 58.00,
-    imagem: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=80",
+    desconto: 0,
+    imagem: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80",
+    galeria: [
+      "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=1200&q=80",
+      "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=1200&q=80",
+      "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=1200&q=80",
+      "https://images.unsplash.com/photo-1604147706283-d7119b5b822c?w=1200&q=80",
+    ],
+    video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    descricao: "Sketchbook 100g com 100 folhas, capa rígida costurada. Versátil para grafite, lápis de cor e tinta seca.",
     destaque: false,
   },
   {
@@ -55,7 +101,16 @@ const PRODUTOS = [
     marca: "Trident",
     categoria: "Cavaletes",
     preco: 450.00,
-    imagem: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=400&q=80",
+    desconto: 20,
+    imagem: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800&q=80",
+    galeria: [
+      "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=1200&q=80",
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&q=80",
+      "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=1200&q=80",
+      "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1200&q=80",
+    ],
+    video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    descricao: "Cavalete profissional para estúdio em madeira maciça. Comporta telas até 120cm. Ajuste de altura e inclinação.",
     destaque: true,
   },
   {
@@ -64,7 +119,16 @@ const PRODUTOS = [
     marca: "Faber-Castell",
     categoria: "Pastéis",
     preco: 175.00,
-    imagem: "https://images.unsplash.com/photo-1604147706283-d7119b5b822c?w=400&q=80",
+    desconto: 0,
+    imagem: "https://images.unsplash.com/photo-1604147706283-d7119b5b822c?w=800&q=80",
+    galeria: [
+      "https://images.unsplash.com/photo-1604147706283-d7119b5b822c?w=1200&q=80",
+      "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=1200&q=80",
+      "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1200&q=80",
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&q=80",
+    ],
+    video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    descricao: "Pastéis secos soft com 48 cores variadas. Pigmentos vibrantes, fácil esfumagem, ideais para retratos e paisagens.",
     destaque: false,
   },
   {
@@ -73,7 +137,16 @@ const PRODUTOS = [
     marca: "Fabriano",
     categoria: "Papéis",
     preco: 94.00,
-    imagem: "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=400&q=80",
+    desconto: 5,
+    imagem: "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=800&q=80",
+    galeria: [
+      "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=1200&q=80",
+      "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=1200&q=80",
+      "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=1200&q=80",
+      "https://images.unsplash.com/photo-1604147706283-d7119b5b822c?w=1200&q=80",
+    ],
+    video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    descricao: "Papel aquarela 100% algodão, 300g, formato A3. Grão fino, alta absorção, resistente a múltiplas camadas.",
     destaque: false,
   },
   {
@@ -82,7 +155,16 @@ const PRODUTOS = [
     marca: "Liquitex",
     categoria: "Acessórios",
     preco: 67.50,
-    imagem: "https://images.unsplash.com/photo-1615529162924-f8605388461d?w=400&q=80",
+    desconto: 0,
+    imagem: "https://images.unsplash.com/photo-1615529162924-f8605388461d?w=800&q=80",
+    galeria: [
+      "https://images.unsplash.com/photo-1615529162924-f8605388461d?w=1200&q=80",
+      "https://images.unsplash.com/photo-1580748141549-71748dbe0bdc?w=1200&q=80",
+      "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=1200&q=80",
+      "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1200&q=80",
+    ],
+    video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    descricao: "Verniz acrílico gloss 250ml. Acabamento brilhante, proteção UV, ideal para finalizar trabalhos em acrílico.",
     destaque: false,
   },
   {
@@ -91,7 +173,16 @@ const PRODUTOS = [
     marca: "Bruynzeel",
     categoria: "Lápis",
     preco: 139.90,
-    imagem: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=400&q=80",
+    desconto: 12,
+    imagem: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800&q=80",
+    galeria: [
+      "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=1200&q=80",
+      "https://images.unsplash.com/photo-1604147706283-d7119b5b822c?w=1200&q=80",
+      "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=1200&q=80",
+      "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1200&q=80",
+    ],
+    video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    descricao: "Lápis de cor aquareláveis com 36 cores. Mina suave, alta solubilidade em água, resistência à luz.",
     destaque: false,
   },
 ];
@@ -100,9 +191,29 @@ const PRODUTOS = [
 const CATEGORIAS = ["Todos", ...new Set(PRODUTOS.map((p) => p.categoria))];
 
 // Número WhatsApp da loja (com código do país, sem espaços ou símbolos)
-const WHATSAPP_NUMERO = "258878237402"; // ← Altere para o número real
+const WHATSAPP_NUMERO = "258878237402";
+
+// ─── Helpers ─────────────────────────────────────────────────
 
 // Formatar valor em Metical (MZN)
 function formatarMZN(valor) {
-  return "MZN " + valor.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return "MZN " + Number(valor).toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+// Calcula o preço final aplicando o desconto, se houver
+function precoComDesconto(produto) {
+  const d = produto.desconto || 0;
+  return d > 0 ? produto.preco * (1 - d / 100) : produto.preco;
+}
+
+// Procurar produto por id
+function encontrarProduto(id) {
+  return PRODUTOS.find((p) => p.id === Number(id));
+}
+
+// Produtos relacionados (mesma categoria, excluindo o próprio)
+function produtosRelacionados(produto, limite = 4) {
+  return PRODUTOS
+    .filter((p) => p.categoria === produto.categoria && p.id !== produto.id)
+    .slice(0, limite);
 }
