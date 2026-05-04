@@ -4,14 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lumart — Art Supplies</title>
-  <meta name="description" content="Gere cotações profissionais de materiais artísticos e envie via WhatsApp." />
+  <meta name="description" content="E-commerce de materiais artísticos profissionais. Compra online ou gere cotações e envia via WhatsApp." />
 
   <!-- Fontes Google -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="style.css" />
+  <!-- Bootstrap 5 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+
+  <!-- CSS Lumart -->
+  <link rel="stylesheet" href="styles/style.css" />
+  <link rel="stylesheet" href="styles/components.css" />
 
   <!-- jsPDF via CDN (usado em pdf.js) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
@@ -19,26 +23,12 @@
 <body>
 
   <!-- ══════════════════════════════════════════════════════════
-       HEADER
+       HEADER (carregado dinamicamente)
   ══════════════════════════════════════════════════════════ -->
-  <header class="header">
-    <nav class="nav">
-      <a class="nav-logo" href="#" onclick="irParaCatalogo(); return false;">
-        Lu<span>mart</span>
-      </a>
-      <div class="nav-acoes">
-        <a class="nav-link ativo" href="#" id="link-catalogo" onclick="irParaCatalogo(); return false;">Catálogo</a>
-        <a class="nav-link" href="#" id="link-cotacao" onclick="irParaFormulario(); return false;">Cotação</a>
-        <button class="btn-carrinho" onclick="abrirCarrinho()" aria-label="Ver carrinho">
-          🛒
-          <span class="badge-carrinho" id="badge-carrinho">0</span>
-        </button>
-      </div>
-    </nav>
-  </header>
+  <div data-component="header"></div>
 
   <!-- ══════════════════════════════════════════════════════════
-       SEÇÃO: CATÁLOGO
+       SECÇÃO: CATÁLOGO
   ══════════════════════════════════════════════════════════ -->
   <main id="secao-catalogo" class="ativo">
 
@@ -49,8 +39,8 @@
           Equip your studio.<br/><em>Elevate your craft.</em>
         </h1>
         <p class="hero-subtitulo">
-          Gere cotações profissionais para materiais artísticos em segundos.
-          Ideal para artistas e revendedores.
+          Materiais artísticos profissionais — compra online ou gera cotações em segundos.
+          Entregas em Moçambique e África do Sul.
         </p>
         <button class="btn-comecar" onclick="document.querySelector('.catalogo').scrollIntoView({behavior:'smooth'})">
           Começar Agora →
@@ -60,69 +50,97 @@
 
     <!-- Filtros de Categoria -->
     <div class="filtros-wrap">
-      <div class="filtros" id="lista-filtros">
-        <!-- Gerado dinamicamente por JS -->
-      </div>
+      <div class="filtros" id="lista-filtros"></div>
     </div>
 
     <!-- Grid de Produtos -->
     <section class="catalogo">
       <h2 class="catalogo-titulo">Produtos em Destaque</h2>
-      <div class="produtos-grid" id="grid-produtos">
-        <!-- Gerado dinamicamente por JS -->
-      </div>
+      <div class="produtos-grid" id="grid-produtos"></div>
     </section>
 
   </main>
 
   <!-- ══════════════════════════════════════════════════════════
-       SEÇÃO: FORMULÁRIO DE COTAÇÃO
+       SECÇÃO: FORMULÁRIO DE COTAÇÃO / CHECKOUT
   ══════════════════════════════════════════════════════════ -->
   <main id="secao-cotacao">
     <div class="secao-cotacao ativo">
 
-      <!-- Voltar -->
       <div class="cotacao-voltar" onclick="irParaCatalogo()">
         ← Voltar ao catálogo
       </div>
 
-      <h1 class="cotacao-titulo display">Finalizar Cotação</h1>
-      <p class="cotacao-subtitulo">Preencha seus dados para gerar o PDF ou enviar direto para nossa equipe.</p>
+      <h1 class="cotacao-titulo display">Finalizar Pedido</h1>
+      <p class="cotacao-subtitulo">Preenche o endereço para calcular o frete e gerar a tua cotação.</p>
 
-      <!-- Bloco: Seus Dados -->
+      <!-- Bloco: Dados pessoais -->
       <div class="bloco-form">
-        <h3 class="bloco-titulo">
-          <span>👤</span> Seus Dados
-        </h3>
+        <h3 class="bloco-titulo"><span>👤</span> Dados Pessoais</h3>
 
         <div class="campo">
           <label for="input-nome">Nome Completo</label>
           <input type="text" id="input-nome" placeholder="Ex: Maria da Silva" autocomplete="name" />
         </div>
-
         <div class="campo">
           <label for="input-telefone">WhatsApp / Telefone</label>
           <input type="tel" id="input-telefone" placeholder="(+258) 84 000 0000" autocomplete="tel" />
         </div>
+      </div>
 
-        <div class="campo">
-          <label for="input-endereco">Endereço de Entrega</label>
-          <input type="text" id="input-endereco" placeholder="Rua, Número, Bairro, Cidade" autocomplete="street-address" />
+      <!-- Bloco: Endereço de envio (sistema de envio inteligente) -->
+      <div class="bloco-form">
+        <h3 class="bloco-titulo"><span>📦</span> Endereço de Envio</h3>
+
+        <div class="campos-grid">
+          <div class="campo">
+            <label for="input-pais">País</label>
+            <select id="input-pais">
+              <option value="">Seleccione...</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="input-provincia">Província / Distrito</label>
+            <select id="input-provincia">
+              <option value="">Seleccione o país primeiro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="campos-grid">
+          <div class="campo">
+            <label for="input-cidade">Cidade</label>
+            <input type="text" id="input-cidade" placeholder="Ex: Maputo" autocomplete="address-level2" />
+          </div>
+          <div class="campo">
+            <label for="input-bairro">Bairro</label>
+            <input type="text" id="input-bairro" placeholder="Ex: Polana" />
+          </div>
         </div>
 
         <div class="campo">
-          <label for="input-obs">Observações (Opcional)</label>
+          <label for="input-referencia">Ponto de Referência (opcional)</label>
+          <input type="text" id="input-referencia" placeholder="Ex: junto à escola, prédio azul" />
+        </div>
+
+        <div class="campo">
+          <label for="input-obs">Observações (opcional)</label>
           <textarea id="input-obs" placeholder="Instruções de entrega, prazos preferidos, etc."></textarea>
         </div>
       </div>
 
       <!-- Bloco: Resumo do Pedido -->
       <div class="bloco-form">
-        <h3 class="bloco-titulo">
-          <span>📋</span> Resumo do Pedido
-        </h3>
-        <div id="resumo-produtos">
-          <!-- Gerado dinamicamente -->
+        <h3 class="bloco-titulo"><span>📋</span> Resumo do Pedido</h3>
+        <div id="resumo-produtos"></div>
+
+        <div class="resumo-linha">
+          <span>Subtotal</span>
+          <strong id="resumo-subtotal">MZN 0,00</strong>
+        </div>
+        <div class="resumo-linha">
+          <span>Frete</span>
+          <strong id="resumo-frete">A calcular</strong>
         </div>
         <div class="resumo-total">
           <span class="resumo-total-label">Total Estimado</span>
@@ -132,9 +150,7 @@
 
       <!-- Bloco: Pré-visualização do Documento -->
       <div class="bloco-form">
-        <h3 class="bloco-titulo">
-          <span>📄</span> Pré-visualização do Documento
-        </h3>
+        <h3 class="bloco-titulo"><span>📄</span> Pré-visualização do Documento</h3>
         <div class="pdf-preview" id="pdf-preview">
           <div class="pdf-preview-header">
             <div class="pdf-preview-logo">Lumart</div>
@@ -158,7 +174,7 @@
   <div class="barra-inferior" id="barra-inferior">
     <div class="barra-info">
       <strong id="barra-itens">0 itens adicionados</strong><br/>
-      <span>Prontos para cotação</span>
+      <span>Prontos para checkout</span>
     </div>
     <button class="btn-ver-carrinho" onclick="abrirCarrinho()">
       🛒 Ver Carrinho
@@ -184,19 +200,20 @@
   <div class="modal-overlay" id="modal-carrinho" onclick="fecharCarrinhoOverlay(event)">
     <div class="modal-box">
       <div class="modal-header">
-        <span class="modal-titulo">🛒 Sua Cotação</span>
-        <button class="btn-fechar" onclick="fecharCarrinho()">✕</button>
+        <span class="modal-titulo">🛒 O teu carrinho</span>
+        <button class="btn-fechar" onclick="fecharCarrinho()" aria-label="Fechar">✕</button>
       </div>
-      <div class="modal-lista" id="lista-carrinho">
-        <!-- Itens gerados por carrinho.js -->
-      </div>
+      <div class="modal-lista" id="lista-carrinho"></div>
       <div class="modal-footer">
         <div class="modal-total">
-          <span class="modal-total-label">Total Parcial</span>
+          <span class="modal-total-label">Subtotal</span>
           <span class="modal-total-valor" id="total-carrinho">MZN 0,00</span>
         </div>
         <button class="btn-finalizar" onclick="irParaFormulario()">
-          Revisar e Continuar →
+          Finalizar com Cotação →
+        </button>
+        <button class="btn-whatsapp btn-whatsapp-lm" onclick="checkoutWhatsAppCarrinho()">
+          Comprar via WhatsApp
         </button>
         <button class="btn-limpar" onclick="confirmarLimpar()">
           Limpar carrinho
@@ -206,182 +223,29 @@
   </div>
 
   <!-- ══════════════════════════════════════════════════════════
-       FOOTER
+       FOOTER (carregado dinamicamente)
   ══════════════════════════════════════════════════════════ -->
-  <footer class="footer" id="rodape">
-    <strong>Lumart Comercial</strong> Art Supplies · © 2026 · Traços que contam Histórias
-  </footer>
+  <div data-component="footer"></div>
 
   <!-- ══════════════════════════════════════════════════════════
        SCRIPTS
-       Ordem: produtos → carrinho → pdf → app
+       Ordem: produtos → carrinho → shipping → pdf → reviews → app → components
   ══════════════════════════════════════════════════════════ -->
-  <script src="produtos.js"></script>
-  <script src="carrinho.js"></script>
-  <script src="pdf.js"></script>
+  <script src="js/produtos.js"></script>
+  <script src="js/carrinho.js"></script>
+  <script src="js/shipping.js"></script>
+  <script src="js/pdf.js"></script>
+  <script src="js/reviews.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/components.js"></script>
 
   <script>
-  // ============================================================
-  //  APP — Lógica principal de renderização e navegação
-  // ============================================================
-
-  // Categoria activa para filtro
-  let categoriaActiva = "Todos";
-
-  // ── Renderizar filtros de categoria ──────────────────────────
-  function renderizarFiltros() {
-    const container = document.getElementById("lista-filtros");
-    if (!container) return;
-
-    container.innerHTML = CATEGORIAS.map((cat) => `
-      <button
-        class="btn-filtro ${cat === categoriaActiva ? "ativo" : ""}"
-        onclick="filtrarPor('${cat}')"
-      >${cat}</button>
-    `).join("");
-  }
-
-  function filtrarPor(categoria) {
-    categoriaActiva = categoria;
-    renderizarFiltros();
-    renderizarProdutos();
-  }
-
-  // ── Renderizar grid de produtos ───────────────────────────────
-  function renderizarProdutos() {
-    const grid = document.getElementById("grid-produtos");
-    if (!grid) return;
-
-    const lista = categoriaActiva === "Todos"
-      ? PRODUTOS
-      : PRODUTOS.filter((p) => p.categoria === categoriaActiva);
-
-    if (lista.length === 0) {
-      grid.innerHTML = `<p style="color:#94a3b8;grid-column:1/-1;padding:24px 0;">Nenhum produto encontrado.</p>`;
-      return;
+    // Atalho: se a URL tiver #cotacao, abrir directamente o formulário (vindo da página de produto)
+    if (location.hash === "#cotacao") {
+      document.addEventListener("DOMContentLoaded", () => {
+        if (carrinho.length > 0) irParaFormulario();
+      });
     }
-
-    grid.innerHTML = lista.map((prod, i) => `
-      <article class="card-produto" style="animation-delay:${i * 50}ms">
-        <img
-          class="card-imagem"
-          src="${prod.imagem}"
-          alt="${prod.nome}"
-          loading="lazy"
-          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 160%22><rect fill=%22%23e2e8f0%22 width=%22200%22 height=%22160%22/><text fill=%22%2394a3b8%22 x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-size=%2232%22>🎨</text></svg>'"
-        />
-        <div class="card-corpo">
-          ${prod.destaque ? '<span class="card-badge-destaque">⭐ Destaque</span>' : ''}
-          <p class="card-marca">${prod.marca}</p>
-          <h3 class="card-nome">${prod.nome}</h3>
-          <p class="card-preco">${formatarMZN(prod.preco)}</p>
-          <button
-            class="btn-adicionar ${carrinho.find(i => i.id === prod.id) ? 'no-carrinho' : ''}"
-            data-id="${prod.id}"
-            onclick="adicionarAoCarrinho(${prod.id})"
-          >${carrinho.find(i => i.id === prod.id) ? '✓ Adicionado' : '+ Adicionar'}</button>
-        </div>
-      </article>
-    `).join("");
-  }
-
-  // ── Renderizar resumo da cotação (formulário) ─────────────────
-  function renderizarResumoFinal() {
-    const container = document.getElementById("resumo-produtos");
-    const totalEl   = document.getElementById("resumo-total");
-    if (!container) return;
-
-    if (carrinho.length === 0) {
-      container.innerHTML = `<p style="color:#94a3b8;font-size:.85rem;padding:8px 0;">Nenhum produto adicionado.</p>`;
-      if (totalEl) totalEl.textContent = formatarMZN(0);
-      return;
-    }
-
-    container.innerHTML = carrinho.map((item) => `
-      <div class="resumo-produto">
-        <img
-          class="resumo-prod-icone"
-          src="${item.imagem}"
-          alt="${item.nome}"
-          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22><rect fill=%22%23e2e8f0%22 width=%2236%22 height=%2236%22/></svg>'"
-        />
-        <div class="resumo-prod-info">
-          <div class="resumo-prod-nome">${item.nome}</div>
-          <div class="resumo-prod-qtd">Qtd: ${item.qtd}</div>
-        </div>
-        <div class="resumo-prod-preco">${formatarMZN(item.preco * item.qtd)}</div>
-      </div>
-    `).join("");
-
-    if (totalEl) totalEl.textContent = formatarMZN(calcularTotal());
-  }
-
-  // ── Navegação entre seções ────────────────────────────────────
-  function irParaCatalogo() {
-    document.getElementById("secao-catalogo").classList.add("ativo");
-    document.getElementById("secao-cotacao").classList.remove("ativo");
-    document.getElementById("secao-catalogo").style.display = "block";
-    document.getElementById("secao-cotacao").style.display = "none";
-    document.getElementById("acoes-cotacao").classList.remove("ativo");
-    document.getElementById("link-catalogo").classList.add("ativo");
-    document.getElementById("link-cotacao").classList.remove("ativo");
-    document.getElementById("rodape").style.display = "block";
-    fecharCarrinho();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  function irParaFormulario() {
-    if (carrinho.length === 0) {
-      mostrarToast("Adicione pelo menos um produto antes de continuar.");
-      return;
-    }
-    fecharCarrinho();
-    document.getElementById("secao-catalogo").style.display = "none";
-    document.getElementById("secao-cotacao").style.display = "block";
-    document.getElementById("acoes-cotacao").classList.add("ativo");
-    document.getElementById("link-catalogo").classList.remove("ativo");
-    document.getElementById("link-cotacao").classList.add("ativo");
-    document.getElementById("rodape").style.display = "none";
-    renderizarResumoFinal();
-    atualizarPreviewPDF();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  // Fechar modal ao clicar fora
-  function fecharCarrinhoOverlay(e) {
-    if (e.target === document.getElementById("modal-carrinho")) fecharCarrinho();
-  }
-
-  // Confirmar limpeza do carrinho
-  function confirmarLimpar() {
-    if (confirm("Deseja remover todos os produtos da cotação?")) {
-      limparCarrinho();
-      renderizarCarrinhoModal();
-      renderizarProdutos();
-    }
-  }
-
-  // ── Preview do PDF (dinâmico) ─────────────────────────────────
-  function atualizarPreviewPDF() {
-    const numEl  = document.getElementById("preview-num");
-    const dataEl = document.getElementById("preview-data");
-    if (numEl)  numEl.innerHTML  = `COTAÇÃO ${gerarNumeroCotacao()}<br/>`;
-    if (dataEl) dataEl.textContent = `Data: ${dataFormatada()}`;
-  }
-
-  // ── Teclado ESC fecha modal ───────────────────────────────────
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") fecharCarrinho();
-  });
-
-  // ── Inicialização ─────────────────────────────────────────────
-  function init() {
-    renderizarFiltros();
-    renderizarProdutos();
-    atualizarUI();
-  }
-
-  init();
   </script>
 
 </body>

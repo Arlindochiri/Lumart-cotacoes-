@@ -1,0 +1,212 @@
+/* ============================================================
+   LUMART — Componentes reutilizáveis (header, footer, etc.)
+   ============================================================ */
+
+/* ── Container utilitário ──────────────────────────────────── */
+.container-lm {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ── Footer profissional ───────────────────────────────────── */
+.footer-pro {
+  background: linear-gradient(180deg, var(--indigo-900) 0%, #14122e 100%);
+  color: rgba(255,255,255,.75);
+  padding: 56px 20px 0;
+  margin-top: 60px;
+  border-top: 4px solid var(--amber-400);
+}
+
+.footer-container {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  padding-bottom: 40px;
+}
+
+@media (min-width: 640px) {
+  .footer-container { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 960px) {
+  .footer-container { grid-template-columns: 1.4fr 1fr 1fr 1fr; }
+}
+
+.footer-brand .footer-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--white);
+  display: inline-block;
+  margin-bottom: 12px;
+  letter-spacing: -.5px;
+}
+.footer-brand .footer-logo span { color: var(--amber-400); }
+
+.footer-tagline {
+  font-size: .9rem;
+  line-height: 1.7;
+  color: rgba(255,255,255,.65);
+  margin-bottom: 18px;
+  max-width: 320px;
+}
+
+.footer-redes {
+  display: flex;
+  gap: 10px;
+}
+
+.footer-redes a {
+  width: 38px; height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,.08);
+  color: var(--white);
+  border-radius: 50%;
+  transition: background var(--transition), transform var(--transition);
+}
+.footer-redes a:hover {
+  background: var(--amber-400);
+  color: var(--indigo-900);
+  transform: translateY(-2px);
+}
+
+.footer-titulo {
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-links a, .footer-links span {
+  color: rgba(255,255,255,.65);
+  font-size: .88rem;
+  transition: color var(--transition), padding-left var(--transition);
+  display: inline-block;
+}
+.footer-links a:hover {
+  color: var(--amber-400);
+  padding-left: 4px;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,.08);
+  text-align: center;
+  padding: 18px 20px;
+  font-size: .82rem;
+  color: rgba(255,255,255,.55);
+}
+.footer-bottom strong { color: var(--white); }
+
+/* ── Botões consistentes (componentes Lumart) ──────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  padding: 12px 22px;
+  font-size: .95rem;
+  transition: transform var(--transition), background var(--transition), box-shadow var(--transition);
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+}
+.btn:hover { transform: translateY(-1px); }
+
+.btn-primary-lm {
+  background: var(--indigo-600);
+  color: var(--white);
+}
+.btn-primary-lm:hover { background: var(--indigo-800); box-shadow: 0 6px 20px rgba(79,70,229,.3); color: var(--white); }
+
+.btn-whatsapp-lm {
+  background: #25D366;
+  color: var(--white);
+}
+.btn-whatsapp-lm:hover { background: #1da851; color: var(--white); box-shadow: 0 6px 20px rgba(37,211,102,.3); }
+
+/* ── Breadcrumb ────────────────────────────────────────────── */
+.breadcrumb-lm {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: .85rem;
+  color: var(--slate-500);
+  margin: 18px 0 22px;
+}
+.breadcrumb-lm a { color: var(--indigo-600); transition: color var(--transition); }
+.breadcrumb-lm a:hover { color: var(--indigo-800); }
+.breadcrumb-lm .sep { color: var(--slate-300); }
+.breadcrumb-lm strong { color: var(--slate-900); font-weight: 600; }
+
+/* ── Loading skeleton ──────────────────────────────────────── */
+.loading-skeleton {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--slate-500);
+}
+.alert-vazio {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--slate-700);
+}
+.alert-vazio h2 { margin-bottom: 12px; }
+.alert-vazio p { margin-bottom: 22px; color: var(--slate-500); }
+
+/* ── Card desconto / ajustes ──────────────────────────────── */
+.card-imagem-wrap {
+  position: relative;
+  overflow: hidden;
+}
+.card-link { display: block; }
+
+.card-badge-desconto {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: var(--red-500);
+  color: var(--white);
+  font-weight: 700;
+  font-size: .75rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: .5px;
+  z-index: 2;
+}
+
+.card-precos {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.card-preco-antigo {
+  font-size: .8rem;
+  color: var(--slate-400);
+  text-decoration: line-through;
+}
+
+.card-nome a { color: inherit; transition: color var(--transition); }
+.card-nome a:hover { color: var(--indigo-600); }
+
+/* Animações suaves de imagem nos cards */
+.card-produto .card-imagem {
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
+}
+.card-produto:hover .card-imagem {
+  transform: scale(1.04);
+}
