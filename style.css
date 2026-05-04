@@ -596,13 +596,29 @@ h1, h2, h3 { line-height: 1.25; }
   align-items: center;
   gap: 6px;
   color: var(--indigo-600);
+  font-family: inherit;
   font-weight: 600;
   font-size: .875rem;
   margin-bottom: 22px;
+  padding: 0;
+  background: none;
+  border: 0;
   cursor: pointer;
   transition: gap var(--transition);
 }
 .cotacao-voltar:hover { gap: 10px; }
+.cotacao-voltar:focus-visible {
+  outline: 2px solid var(--indigo-600);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.campo-ajuda {
+  display: block;
+  margin-top: 4px;
+  font-size: .75rem;
+  color: #94a3b8;
+}
 
 .cotacao-titulo {
   font-family: 'Playfair Display', serif;
