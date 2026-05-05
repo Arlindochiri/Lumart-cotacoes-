@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumart — Art Supplies</title>
+  <meta name="description" content="Materiais artísticos premium. Gere cotações profissionais e envie via WhatsApp." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- ════════════════════════════════════════════════════════════
+     ANNOUNCEMENT BAR
+════════════════════════════════════════════════════════════ -->
+<div class="announcement-bar" aria-hidden="true">
+  <div class="announcement-track">
+    <span>Entrega em <b>13–30 dias</b> úteis</span>
+    <span>·</span>
+    <span>Pagamento <b>60% no pedido</b> + 40% na entrega</span>
+    <span>·</span>
+    <span>Materiais <b>profissionais</b> seleccionados</span>
+    <span>·</span>
+    <span>Entrega em <b>13–30 dias</b> úteis</span>
+    <span>·</span>
+    <span>Pagamento <b>60% no pedido</b> + 40% na entrega</span>
+    <span>·</span>
+    <span>Materiais <b>profissionais</b> seleccionados</span>
+    <span>·</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════════════════════ -->
+<header class="header" id="header">
+  <nav class="nav">
+    <a class="nav-logo" href="#" onclick="irParaCatalogo();return false;">Lu<em>mart</em></a>
+    <div class="nav-center">
+      <a class="nav-link ativo" id="link-catalogo" href="#" onclick="irParaCatalogo();return false;">Catálogo</a>
+      <a class="nav-link"       id="link-cotacao"  href="#" onclick="irParaFormulario();return false;">Cotação</a>
+    </div>
+    <div class="nav-acoes">
+      <button class="btn-nav-cotacao" onclick="irParaFormulario()">Fazer Cotação</button>
+      <button class="btn-cart" id="btn-cart-main" onclick="abrirCarrinho()" aria-label="Abrir carrinho">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span class="cart-badge" id="badge-carrinho">0</span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<!-- ════════════════════════════════════════════════════════════
+     CATÁLOGO
+════════════════════════════════════════════════════════════ -->
+<main id="secao-catalogo" class="ativo">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">Art Supplies · Moçambique</div>
+      <h1 class="hero-title">
+        Equip your<br/>studio.
+        <em>Elevate<br/>your craft.</em>
+      </h1>
+      <p class="hero-desc">
+        Materiais artísticos de qualidade profissional. Gere a sua cotação em segundos e envie directamente para a nossa equipa via WhatsApp.
+      </p>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="document.getElementById('filtros-anchor').scrollIntoView({behavior:'smooth'})">
+          Ver Produtos
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <button class="btn-ghost" onclick="irParaFormulario()">
+          Como funciona?
+        </button>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">10+</div>
+          <div class="hero-stat-label">Marcas</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">48h</div>
+          <div class="hero-stat-label">Resposta</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">100%</div>
+          <div class="hero-stat-label">Profissional</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-img-grid">
+        <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&q=85" alt="Pincéis" />
+        <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=600&q=85" alt="Aquarelas" />
+        <img src="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=600&q=85" alt="Arte" />
+      </div>
+      <div class="hero-floating-tag">
+        <div class="hero-tag-label">Cotação rápida</div>
+        <div class="hero-tag-value">Em 60 segundos</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brands strip -->
+  <div class="brands-strip" aria-hidden="true">
+    <div class="brands-track">
+      <span class="brand-item">Winsor & Newton</span><span class="brand-sep">✦</span>
+      <span class="brand-item">Faber-Castell</span><span class="brand-sep">✦</span>
+      <span class="brand-item">Canson</span><span class="brand-sep">✦</span>
+      <span class="brand-item">Fabriano</span><span class="brand-sep">✦</span>
+      <span class="brand-item">Liquitex</span><span class="brand-sep">✦</span>
+      <span class="brand-item">Bruynzeel</span><span class="brand-sep">✦</span>
+      <span class="brand-item">Corfix</span><span class="brand-sep">✦</span>
+      <span class="brand-item">Trident</span><span class="brand-sep">✦</span>
+      <!-- duplicate para loop -->
+      <span class="brand-item">Winsor & Newton</span><span class="brand-sep">✦</span>
+      <span class="brand-item">Faber-Castell</span><span class="brand-sep">✦</span>
+      <span class="brand-item">Canson</span><span class="brand-sep">✦</span>
+      <span class="brand-item">Fabriano</span><span class="brand-sep">✦</span>
+      <span class="brand-item">Liquitex</span><span class="brand-sep">✦</span>
+      <span class="brand-item">Bruynzeel</span><span class="brand-sep">✦</span>
+      <span class="brand-item">Corfix</span><span class="brand-sep">✦</span>
+      <span class="brand-item">Trident</span><span class="brand-sep">✦</span>
+    </div>
+  </div>
+
+  <!-- Anchor para scroll -->
+  <div id="filtros-anchor"></div>
+
+  <!-- Filtros -->
+  <div class="filtros-wrap">
+    <div class="filtros-inner" id="lista-filtros"></div>
+  </div>
+
+  <!-- Grid -->
+  <section class="catalogo">
+    <div class="catalogo-header reveal">
+      <h2 class="catalogo-titulo">O nosso <span>catálogo</span></h2>
+      <span class="catalogo-count" id="catalogo-count"></span>
+    </div>
+    <div class="produtos-grid" id="grid-produtos"></div>
+  </section>
+
+</main>
+
+<!-- ════════════════════════════════════════════════════════════
+     COTAÇÃO
+════════════════════════════════════════════════════════════ -->
+<main id="secao-cotacao">
+  <div class="cotacao-layout">
+
+    <div class="cotacao-nav">
+      <button class="btn-voltar" onclick="irParaCatalogo()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Voltar ao catálogo
+      </button>
+    </div>
+
+    <!-- Coluna esquerda: formulário -->
+    <div class="cotacao-form-col">
+      <h1 class="cotacao-titulo reveal">Finalizar<br/><em>cotação</em></h1>
+      <p class="cotacao-subtitulo reveal">Preencha os seus dados para gerar o PDF ou enviar directamente para a nossa equipa.</p>
+
+      <div class="bloco-form reveal">
+        <div class="bloco-header">
+          <div class="bloco-icon">👤</div>
+          <span class="bloco-titulo">Seus Dados</span>
+        </div>
+        <div class="bloco-body">
+          <div class="campo">
+            <label for="input-nome">Nome Completo</label>
+            <input type="text" id="input-nome" placeholder="Ex: Maria da Silva" autocomplete="name" />
+          </div>
+          <div class="campo">
+            <label for="input-telefone">WhatsApp / Telefone</label>
+            <input type="tel" id="input-telefone" placeholder="+258 84 000 0000" autocomplete="tel" />
+          </div>
+          <div class="campo">
+            <label for="input-endereco">Endereço de Entrega</label>
+            <input type="text" id="input-endereco" placeholder="Rua, Número, Bairro, Cidade" autocomplete="street-address" />
+          </div>
+          <div class="campo">
+            <label for="input-obs">Observações (Opcional)</label>
+            <textarea id="input-obs" placeholder="Instruções especiais, prazos preferidos…"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coluna direita: resumo -->
+    <div class="cotacao-resumo-col">
+      <div class="resumo-box reveal">
+        <div class="resumo-header">
+          <span class="resumo-titulo">Resumo do Pedido</span>
+        </div>
+        <div class="resumo-lista" id="resumo-produtos"></div>
+        <div class="resumo-total-row">
+          <span class="resumo-total-label">Total Estimado</span>
+          <span class="resumo-total-valor" id="resumo-total">MZN 0,00</span>
+        </div>
+      </div>
+
+      <div class="resumo-termos reveal">
+        <div class="resumo-termos-titulo">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          Termos de Venda
+        </div>
+        <div class="resumo-termos-item">60% no ato do pedido, 40% na entrega</div>
+        <div class="resumo-termos-item">Prazo de entrega: 13 a 30 dias úteis</div>
+        <div class="resumo-termos-item">Cotação válida por 7 dias</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ════════════════════════════════════════════════════════════
+     BARRA INFERIOR
+════════════════════════════════════════════════════════════ -->
+<div class="barra-inferior" id="barra-inferior">
+  <div class="barra-info">
+    <strong id="barra-itens">0 itens</strong><br/>
+    <span style="font-size:.75rem">prontos para cotação</span>
+  </div>
+  <button class="btn-ver-carrinho" onclick="abrirCarrinho()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+    Ver Carrinho
+  </button>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     BOTÕES DE AÇÃO
+════════════════════════════════════════════════════════════ -->
+<div class="acoes-cotacao" id="acoes-cotacao">
+  <button class="btn-whatsapp" onclick="acaoEnviarWhatsApp()">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.535 5.859L0 24l6.335-1.511C8.05 23.452 9.99 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.847 0-3.575-.5-5.063-1.374l-.363-.215-3.763.898.958-3.658-.236-.374A9.937 9.937 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+    Enviar no WhatsApp
+  </button>
+  <button class="btn-pdf" onclick="acaoCriarPDF()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    Baixar PDF
+  </button>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     DRAWER DO CARRINHO
+════════════════════════════════════════════════════════════ -->
+<div class="drawer-overlay" id="modal-carrinho" onclick="fecharCarrinhoOverlay(event)">
+  <div class="drawer">
+
+    <div class="drawer-header">
+      <span class="drawer-titulo">
+        A sua cotação
+        <span class="drawer-titulo-count" id="drawer-count">0</span>
+      </span>
+      <button class="btn-fechar-drawer" onclick="fecharCarrinho()" aria-label="Fechar">✕</button>
+    </div>
+
+    <div class="drawer-body" id="lista-carrinho"></div>
+
+    <div class="drawer-footer">
+      <div class="drawer-total">
+        <span class="drawer-total-label">Total parcial</span>
+        <span class="drawer-total-valor" id="total-carrinho">MZN 0,00</span>
+      </div>
+      <button class="btn-checkout" onclick="irParaFormulario()">
+        Continuar para cotação
+        <span class="btn-checkout-arrow">→</span>
+      </button>
+      <button class="btn-limpar" onclick="confirmarLimpar()">Limpar carrinho</button>
+      <p class="drawer-termos">Preços em Metical (MZN) · 60% no pedido, 40% na entrega · Prazo 13–30 dias úteis</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">Lu<em>mart</em></div>
+      <p class="footer-desc">Materiais artísticos profissionais com entrega rápida. Traços que contam Histórias.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Loja</div>
+      <a class="footer-link" href="#" onclick="irParaCatalogo();return false;">Catálogo</a>
+      <a class="footer-link" href="#" onclick="irParaFormulario();return false;">Fazer Cotação</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Contacto</div>
+      <a class="footer-link" href="#">WhatsApp</a>
+      <a class="footer-link" href="#">lumart.co.mz</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2024 Lumart Art Supplies. Todos os direitos reservados.</span>
+    <span class="footer-copy">Maputo, Moçambique</span>
+  </div>
+</footer>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════════════════════════ -->
+<script src="produtos.js"></script>
+<script src="carrinho.js"></script>
+<script src="pdf.js"></script>
+<script>
+// ============================================================
+//  APP — Renderização, navegação, animações
+// ============================================================
+
+let categoriaActiva = "Todos";
+
+// ── Custom Cursor ─────────────────────────────────────────────
+(function() {
+  const cur  = document.getElementById("cursor");
+  const ring = document.getElementById("cursor-ring");
+  if (!cur || !ring) return;
+  let rx = 0, ry = 0, mx = 0, my = 0;
+  document.addEventListener("mousemove", e => { mx = e.clientX; my = e.clientY; cur.style.left = mx + "px"; cur.style.top = my + "px"; });
+  (function lerp() {
+    rx += (mx - rx) * .12; ry += (my - ry) * .12;
+    ring.style.left = rx + "px"; ring.style.top = ry + "px";
+    requestAnimationFrame(lerp);
+  })();
+})();
+
+// ── Header scroll ─────────────────────────────────────────────
+window.addEventListener("scroll", () => {
+  document.getElementById("header")?.classList.toggle("scrolled", window.scrollY > 10);
+}, { passive: true });
+
+// ── Scroll Reveal ─────────────────────────────────────────────
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visible"); revealObserver.unobserve(e.target); } });
+}, { threshold: .1, rootMargin: "0px 0px -40px 0px" });
+
+function observarReveal() {
+  document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
+}
+
+// ── Filtros ───────────────────────────────────────────────────
+function renderizarFiltros() {
+  const container = document.getElementById("lista-filtros");
+  if (!container) return;
+  container.innerHTML = CATEGORIAS.map(cat => `
+    <button class="btn-filtro ${cat === categoriaActiva ? "ativo" : ""}" onclick="filtrarPor('${cat}')">${cat}</button>
+  `).join("");
+}
+
+function filtrarPor(cat) {
+  categoriaActiva = cat;
+  renderizarFiltros();
+  renderizarProdutos();
+}
+
+// ── Grid de Produtos ──────────────────────────────────────────
+function renderizarProdutos() {
+  const grid  = document.getElementById("grid-produtos");
+  const count = document.getElementById("catalogo-count");
+  if (!grid) return;
+
+  const lista = categoriaActiva === "Todos" ? PRODUTOS : PRODUTOS.filter(p => p.categoria === categoriaActiva);
+  if (count) count.textContent = `${lista.length} produto${lista.length !== 1 ? "s" : ""}`;
+
+  if (lista.length === 0) {
+    grid.innerHTML = `<p style="color:var(--ash);grid-column:1/-1;padding:32px 0;font-size:.88rem;">Nenhum produto encontrado.</p>`;
+    return;
+  }
+
+  grid.innerHTML = lista.map(p => {
+    const emCart       = !!carrinho.find(i => i.id === p.id);
+    const temDesconto  = p.desconto && p.desconto > 0;
+    const precoFinal   = precoComDesconto(p);
+    const dispLabel    = p.disponibilidade === "disponivel" ? "Em stock" : "Sob encomenda";
+    const dispClasse   = p.disponibilidade === "disponivel" ? "disp-stock" : "disp-encomenda";
+
+    return `
+      <article class="card-produto">
+        <a class="card-link" href="produto.html?id=${p.id}" aria-label="Ver ${p.nome}">
+          <div class="card-img-wrap">
+            <img class="card-imagem" src="${p.imagens[0]}" alt="${p.nome}" loading="lazy"
+                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 400%22><rect fill=%22%23f5f3ee%22 width=%22300%22 height=%22400%22/><text fill=%22%23c8c5d0%22 font-size=%2248%22 x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>🎨</text></svg>'" />
+            <div class="card-badges">
+              ${p.destaque    ? '<span class="card-badge">⭐ Destaque</span>' : ''}
+              ${temDesconto   ? `<span class="card-badge badge-desc">−${p.desconto}%</span>` : ''}
+              <span class="card-badge ${dispClasse}">${dispLabel}</span>
+            </div>
+          </div>
+        </a>
+        <div class="card-corpo">
+          <div class="card-marca">${p.marca}</div>
+          <h3 class="card-nome">
+            <a href="produto.html?id=${p.id}">${p.nome}</a>
+          </h3>
+          <div class="card-footer">
+            <span class="card-preco-wrap">
+              ${temDesconto ? `<span class="card-preco-old">${formatarMZN(p.preco)}</span>` : ''}
+              <span class="card-preco">${formatarMZN(precoFinal)}</span>
+            </span>
+            <button class="btn-add-mobile ${emCart ? 'no-carrinho' : ''}" data-id="${p.id}" onclick="event.preventDefault();adicionarAoCarrinho(${p.id})" aria-label="Adicionar">
+              ${emCart ? '✓' : '+'}
+            </button>
+          </div>
+          <div class="card-overlay-actions">
+            <button class="btn-quick-add ${emCart ? 'no-carrinho' : ''}" data-id="${p.id}" onclick="event.preventDefault();adicionarAoCarrinho(${p.id})">
+              ${emCart ? '✓ Adicionado' : 'Adicionar à Cotação'}
+            </button>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+// ── Resumo da cotação ─────────────────────────────────────────
+function renderizarResumoCotacao() {
+  const lista   = document.getElementById("resumo-produtos");
+  const totalEl = document.getElementById("resumo-total");
+  if (!lista) return;
+
+  if (carrinho.length === 0) {
+    lista.innerHTML = `<p style="color:var(--ash);font-size:.84rem;padding:14px 22px;">Nenhum produto adicionado.</p>`;
+    if (totalEl) totalEl.textContent = formatarMZN(0);
+    return;
+  }
+
+  lista.innerHTML = carrinho.map(item => {
+    const precoFinal = precoComDesconto(item);
+    return `
+    <div class="resumo-item">
+      <img src="${item.imagens[0]}" alt="${item.nome}"
+           onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 42 42%22><rect fill=%22%23f5f3ee%22 width=%2242%22 height=%2242%22/></svg>'" />
+      <div class="resumo-item-info">
+        <span class="resumo-item-nome">${item.nome}</span>
+        <span class="resumo-item-qtd">× ${item.qtd}</span>
+      </div>
+      <span class="resumo-item-preco">${formatarMZN(precoFinal * item.qtd)}</span>
+    </div>
+  `;
+  }).join("");
+
+  if (totalEl) {
+    const total = carrinho.reduce((acc, i) => acc + precoComDesconto(i) * i.qtd, 0);
+    totalEl.textContent = formatarMZN(total);
+  }
+}
+
+// ── Navegação ─────────────────────────────────────────────────
+function irParaCatalogo() {
+  document.getElementById("secao-catalogo").style.display = "block";
+  document.getElementById("secao-catalogo").classList.add("ativo");
+  document.getElementById("secao-cotacao").style.display   = "none";
+  document.getElementById("secao-cotacao").classList.remove("ativo");
+  document.getElementById("acoes-cotacao").classList.remove("ativo");
+  document.getElementById("link-catalogo").classList.add("ativo");
+  document.getElementById("link-cotacao").classList.remove("ativo");
+  fecharCarrinho();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  setTimeout(observarReveal, 100);
+}
+
+function irParaFormulario() {
+  if (carrinho.length === 0) {
+    mostrarToast("Adicione produtos à cotação antes de continuar.");
+    return;
+  }
+  fecharCarrinho();
+  window.location.href = "checkout.html";
+}
+
+function fecharCarrinhoOverlay(e) {
+  if (e.target === document.getElementById("modal-carrinho")) fecharCarrinho();
+}
+
+function confirmarLimpar() {
+  if (carrinho.length === 0) return;
+  if (confirm("Remover todos os produtos da cotação?")) { limparCarrinho(); renderizarDrawer(); renderizarProdutos(); }
+}
+
+// ── Teclado ───────────────────────────────────────────────────
+document.addEventListener("keydown", e => { if (e.key === "Escape") fecharCarrinho(); });
+
+// ── Pulse animation no btn-cart ───────────────────────────────
+const styleEl = document.createElement("style");
+styleEl.textContent = `
+  @keyframes cartPulse { 0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.5)} 40%{box-shadow:0 0 0 8px rgba(212,175,55,0)} }
+  .btn-cart.pulse { animation: cartPulse .4s ease-out; }
+`;
+document.head.appendChild(styleEl);
+
+// ── Init ──────────────────────────────────────────────────────
+function init() {
+  // Suporte para ?cat=Categoria vindo do breadcrumb da página de produto
+  const params = new URLSearchParams(window.location.search);
+  const catURL = params.get("cat");
+  if (catURL && CATEGORIAS.includes(catURL)) categoriaActiva = catURL;
+
+  renderizarFiltros();
+  renderizarProdutos();
+  atualizarUI();
+  setTimeout(observarReveal, 200);
+
+  // Redirect legacy #cotacao para checkout
+  if (window.location.hash === "#cotacao" && carrinho.length > 0) {
+    window.location.href = "checkout.html";
+  }
+}
+
+init();
+</script>
+</body>
+</html>
