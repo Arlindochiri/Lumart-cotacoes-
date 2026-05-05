@@ -288,7 +288,7 @@ const CATEGORIAS = ["Todos", ...new Set(PRODUTOS.map(p => p.categoria))];
 // ════════════════════════════════════════════════════════════
 //  3. CONFIGURAÇÕES DA LOJA
 // ════════════════════════════════════════════════════════════
-const WHATSAPP_NUMERO = "258840000000"; // ← Alterar para o número real (sem espaços/símbolos)
+const WHATSAPP_NUMERO = "258878237402"; // ← Alterar para o número real (sem espaços/símbolos)
 
 
 // ════════════════════════════════════════════════════════════
