@@ -1147,7 +1147,10 @@ function bulkAcao(acao) {
         renderizarTabela();
         renderizarDashboard();
         mostrarToast(`${ids.length} produto(s) eliminados`);
-    }   
+      },
+    });
+  }
+}
 
 
 
