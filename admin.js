@@ -2763,7 +2763,8 @@ document.addEventListener("keydown", e => {
 //  INICIALIZAÇÃO
 // ════════════════════════════════════════════════════════════
 
-document.addEventListener("DOMContentLoaded", () => {
+// Inicializar imediatamente se DOM já carregou, ou esperar
+function adminInit() {
   // Carregar tema imediatamente (antes de qualquer outra coisa)
   carregarTema();
 
@@ -2778,8 +2779,14 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     entrarPainel();
   }
-});
-      
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", adminInit);
+} else {
+  // DOM já carregou — executar já
+  adminInit();
+          }
                     
   
 
