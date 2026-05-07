@@ -1752,7 +1752,1035 @@ function salvarReview() {
     data: data || new Date().toISOString().split("T")[0],
     comentario,
   };
-
   if (!produtoEmEdicao.reviews) produtoEmEdicao.reviews = [];
+
+  if (reviewEditando === -1) {
+    produtoEmEdicao.reviews.push(review);
+    registarHistorico("reviews", `Adicionou review de <strong>${escapeHTML(nome)}</strong>`);
+    mostrarToast("Review adicionada");
+  } else {
+    produtoEmEdicao.reviews[reviewEditando] = review;
+    registarHistorico("reviews", `Editou review de <strong>${escapeHTML(nome)}</strong>`);
+    mostrarToast("Review actualizada");
+  }
+
+  // Salvar imediato no localStorage para reflectir nas mudanças
+  salvarLocal();
+  fecharReviewEditor();
+  renderizarReviews();
+}
+
+function eliminarReview(idx) {
+  if (!produtoEmEdicao || !produtoEmEdicao.reviews) return;
+  const r = produtoEmEdicao.reviews[idx];
+  if (!r) return;
+
+  abrirConfirm({
+    titulo: "Eliminar review?",
+    mensagem: `Quer eliminar a review de <strong>"${escapeHTML(r.nome)}"</strong>?`,
+    btnTexto: "Sim, eliminar",
+    perigo: true,
+    callback: () => {
+      produtoEmEdicao.reviews.splice(idx, 1);
+      registarHistorico("reviews", `Eliminou review de <strong>${escapeHTML(r.nome)}</strong>`);
+      salvarLocal();
+      renderizarReviews();
+      mostrarToast("Review eliminada");
+    },
+  });
+}
+
+
+// ════════════════════════════════════════════════════════════
+//  TEMA (claro / escuro)
+// ════════════════════════════════════════════════════════════
+
+function carregarTema() {
+  const tema = localStorage.getItem(ADMIN_KEY_TEMA) || "claro";
+  aplicarTema(tema);
+}
+
+function aplicarTema(tema) {
+  if (tema === "escuro") {
+    document.body.classList.add("admin-tema-escuro");
+  } else {
+    document.body.classList.remove("admin-tema-escuro");
+  }
+}
+
+function toggleTema() {
+  const actual = localStorage.getItem(ADMIN_KEY_TEMA) || "claro";
+  const novo = actual === "claro" ? "escuro" : "claro";
+  localStorage.setItem(ADMIN_KEY_TEMA, novo);
+  aplicarTema(novo);
+  mostrarToast(novo === "escuro" ? "Modo escuro activado" : "Modo claro activado");
+}
+
+
+// ════════════════════════════════════════════════════════════
+//  PRÉ-VISUALIZAÇÃO COMPLETA
+// ════════════════════════════════════════════════════════════
+
+let previewTab = "catalogo";
+
+function abrirPreviewCompleto() {
+  // Recolher dados actuais do form (não precisa salvar)
+  const dados = obterDadosPreview();
+  if (!dados) {
+    mostrarToast("Preencha pelo menos o nome e a imagem principal");
+    return;
+  }
+
+  document.getElementById("preview-completo-overlay").classList.add("aberto");
+  mudarPreviewTab("catalogo");
+}
+
+function fecharPreviewCompleto() {
+  document.getElementById("preview-completo-overlay").classList.remove("aberto");
+}
+
+function fecharPreviewCompletoOverlay(e) {
+  if (e.target === document.getElementById("preview-completo-overlay")) {
+    fecharPreviewCompleto();
+  }
+}
+
+function obterDadosPreview() {
+  const nome = document.getElementById("ed-nome")?.value.trim();
+  if (!nome) return null;
+
+  return {
+    id: parseInt(document.getElementById("ed-id")?.value) || 0,
+    nome,
+    marca: document.getElementById("ed-marca")?.value.trim() || "Marca",
+    categoria: document.getElementById("ed-categoria")?.value.trim() || "Categoria",
+    preco: parseFloat(document.getElementById("ed-preco")?.value) || 0,
+    desconto: parseFloat(document.getElementById("ed-desconto")?.value) || 0,
+    disponibilidade: document.querySelector('input[name="ed-disp"]:checked')?.value || "disponivel",
+    destaque: document.getElementById("ed-destaque")?.checked || false,
+    ativo: document.getElementById("ed-ativo")?.checked !== false,
+    imagens: [0,1,2,3].map(i => document.getElementById(`ed-img-${i}`)?.value.trim() || ""),
+    video: document.getElementById("ed-video")?.value.trim() || "",
+    descricao: document.getElementById("ed-descricao")?.value.trim() || "",
+    reviews: produtoEmEdicao?.reviews || [],
+  };
+}
+
+function mudarPreviewTab(tab) {
+  previewTab = tab;
+  document.querySelectorAll(".preview-tab-btn").forEach(b => {
+    b.classList.toggle("ativo", b.dataset.pv === tab);
+  });
+
+  const dados = obterDadosPreview();
+  const body = document.getElementById("preview-completo-body");
+  if (!body) return;
+
+  if (!dados) {
+    body.innerHTML = `<p style="text-align:center;color:var(--txt-tertiary);padding:40px;">Preencha o formulário para ver pré-visualização.</p>`;
+    return;
+  }
+
+  switch (tab) {
+    case "catalogo":  body.innerHTML = renderizarPreviewCatalogo(dados);  break;
+    case "busca":     body.innerHTML = renderizarPreviewBusca(dados);     break;
+    case "carrinho":  body.innerHTML = renderizarPreviewCarrinho(dados);  break;
+    case "produto":   body.innerHTML = renderizarPreviewProduto(dados);   break;
+  }
+}
+
+function renderizarPreviewCatalogo(p) {
+  const temDesc = p.desconto && p.desconto > 0;
+  const final = temDesc ? p.preco * (1 - p.desconto / 100) : p.preco;
+  const dispLabel = p.disponibilidade === "disponivel" ? "Em stock" : "Sob encomenda";
+  const dispClasse = p.disponibilidade === "disponivel" ? "preview-badge-stock" : "preview-badge-encomenda";
+  const img = p.imagens[0];
+  const media = p.reviews.length > 0 ? p.reviews.reduce((a, r) => a + r.estrelas, 0) / p.reviews.length : 0;
+
+  let aviso = "";
+  if (!p.ativo) {
+    aviso = `<div class="preview-pausado-aviso">⚠️ Este produto está pausado e <strong>não aparece</strong> no catálogo público.</div>`;
+  }
+
+  return `
+    ${aviso}
+    <p class="preview-secao-titulo">Como aparece no catálogo principal</p>
+    <div class="preview-cat-grid">
+      <div class="preview-cat-card">
+        <div class="preview-cat-card-img ${img ? '' : 'preview-cat-card-img-vazia'}"
+             style="background-image:${img ? `url('${img.replace(/'/g, "\\'")}')` : 'none'}">
+          ${img ? '' : 'Sem imagem'}
+          <div class="preview-cat-badges">
+            ${p.destaque ? '<span class="preview-badge-destaque">⭐ Destaque</span>' : ''}
+            ${temDesc ? `<span class="preview-badge-desc">−${p.desconto}%</span>` : ''}
+            <span class="${dispClasse}">${dispLabel}</span>
+          </div>
+        </div>
+        <div class="preview-cat-corpo">
+          <div class="preview-cat-marca">${escapeHTML(p.marca)}</div>
+          <div class="preview-cat-nome">${escapeHTML(p.nome)}</div>
+          ${media > 0 ? `<div class="preview-cat-stars">${'★'.repeat(Math.round(media))}${'☆'.repeat(5 - Math.round(media))} <span>(${p.reviews.length})</span></div>` : ''}
+          ${temDesc ? `<span class="preview-cat-preco-old">${formatarMZN(p.preco)}</span>` : ''}
+          <span class="preview-cat-preco">${formatarMZN(final)}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderizarPreviewBusca(p) {
+  const final = (p.desconto && p.desconto > 0) ? p.preco * (1 - p.desconto / 100) : p.preco;
+  const dispLabel = p.disponibilidade === "disponivel" ? "Em stock" : "Sob encomenda";
+  const dispClasse = p.disponibilidade === "disponivel" ? "preview-badge-stock" : "preview-badge-encomenda";
+  const img = p.imagens[0];
+
+  let aviso = "";
+  if (!p.ativo) {
+    aviso = `<div class="preview-pausado-aviso">⚠️ Produto pausado <strong>não aparece</strong> nos resultados de busca.</div>`;
+  }
+
+  return `
+    ${aviso}
+    <p class="preview-secao-titulo">Como aparece quando alguém procura</p>
+    <div class="preview-busca-wrap">
+      <div class="preview-busca-input">
+        🔍 Resultado para <strong>"${escapeHTML(p.nome.split(" ")[0])}"</strong>
+      </div>
+      <div class="preview-busca-item">
+        <img src="${escapeHTML(img || '')}" alt="" />
+        <div class="preview-busca-info">
+          <div class="preview-busca-marca">${escapeHTML(p.marca)}</div>
+          <div class="preview-busca-nome">${escapeHTML(p.nome)}</div>
+          <div>
+            <span class="preview-busca-preco">${formatarMZN(final)}</span>
+            <span class="${dispClasse}" style="font-size:.55rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:2px 6px;border-radius:3px">${dispLabel}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderizarPreviewCarrinho(p) {
+  const final = (p.desconto && p.desconto > 0) ? p.preco * (1 - p.desconto / 100) : p.preco;
+  const img = p.imagens[0];
+  const qtd = 2;
+  const total = final * qtd;
+
+  return `
+    <p class="preview-secao-titulo">Como aparece quando o cliente adiciona ao carrinho (com quantidade 2)</p>
+    <div class="preview-carrinho-wrap">
+      <div class="preview-carrinho-header">A sua cotação · 1 item</div>
+      <div class="preview-carrinho-item">
+        <img src="${escapeHTML(img || '')}" alt="" />
+        <div class="preview-carrinho-info">
+          <div class="preview-carrinho-nome">${escapeHTML(p.nome)}</div>
+          <div class="preview-carrinho-preco">${formatarMZN(final)} cada · <strong>${formatarMZN(total)}</strong></div>
+          <div class="preview-carrinho-controles">
+            <button style="width:24px;height:24px;border-radius:50%;background:var(--bg-mist);border:none">−</button>
+            <span class="preview-carrinho-qtd">${qtd}</span>
+            <button style="width:24px;height:24px;border-radius:50%;background:var(--bg-mist);border:none">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="preview-carrinho-total">
+        <span>Total parcial</span>
+        <strong>${formatarMZN(total)}</strong>
+      </div>
+    </div>
+  `;
+}
+
+function renderizarPreviewProduto(p) {
+  const temDesc = p.desconto && p.desconto > 0;
+  const final = temDesc ? p.preco * (1 - p.desconto / 100) : p.preco;
+  const poupanca = p.preco - final;
+  const dispLabel = p.disponibilidade === "disponivel" ? "🟢 Em stock — envio em 1–14 dias" : "🟡 Sob encomenda — importação em 10–30 dias";
+  const img = p.imagens[0];
+  const media = p.reviews.length > 0 ? p.reviews.reduce((a, r) => a + r.estrelas, 0) / p.reviews.length : 0;
+
+  let aviso = "";
+  if (!p.ativo) {
+    aviso = `<div class="preview-pausado-aviso">⚠️ Produto pausado: ao aceder, o cliente vê "Produto temporariamente indisponível".</div>`;
+  }
+
+  return `
+    ${aviso}
+    <p class="preview-secao-titulo">Página individual do produto (resumo simplificado)</p>
+    <div class="preview-prod-wrap">
+      <div class="preview-prod-grid">
+        <div class="preview-prod-img-main" style="background-image:${img ? `url('${img.replace(/'/g, "\\'")}')` : 'none'};"></div>
+        <div class="preview-prod-info">
+          <div class="preview-prod-marca">${escapeHTML(p.marca)} · ${escapeHTML(p.categoria)}</div>
+          <h3 class="preview-prod-nome">${escapeHTML(p.nome)}</h3>
+          ${media > 0 ? `<div class="preview-prod-stars">${'★'.repeat(Math.round(media))}${'☆'.repeat(5 - Math.round(media))} <span>${media.toFixed(1)} · ${p.reviews.length} ${p.reviews.length === 1 ? 'review' : 'reviews'}</span></div>` : ''}
+
+          <div class="preview-prod-preco-bloco">
+            ${temDesc ? `<span class="preview-prod-preco-old">${formatarMZN(p.preco)}</span>` : ''}
+            <div class="preview-prod-preco">${formatarMZN(final)}</div>
+            ${temDesc ? `<div class="preview-prod-poupanca">Poupa ${formatarMZN(poupanca)} (${p.desconto}%)</div>` : ''}
+          </div>
+
+          <div class="preview-prod-disp">${dispLabel}</div>
+
+          ${p.descricao ? `<p class="preview-prod-desc">${escapeHTML(p.descricao)}</p>` : '<p class="preview-prod-desc" style="color:var(--txt-tertiary);font-style:italic">Sem descrição</p>'}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+
+// ════════════════════════════════════════════════════════════
+//  HISTÓRICO — Undo/Redo + lista de mudanças
+// ════════════════════════════════════════════════════════════
+
+const HIST_TIPOS = {
+  criar:    { icone: "✨", label: "Criar" },
+  editar:   { icone: "✏️", label: "Editar" },
+  eliminar: { icone: "🗑️", label: "Eliminar" },
+  duplicar: { icone: "📋", label: "Duplicar" },
+  pausar:   { icone: "👁️", label: "Pausar" },
+  bulk:     { icone: "📦", label: "Massa" },
+  frete:    { icone: "🚚", label: "Frete" },
+  reordenar:{ icone: "🔀", label: "Reordenar" },
+  reviews:  { icone: "⭐", label: "Reviews" },
+  import:   { icone: "📥", label: "Importação" },
+};
+
+/**
+ * Regista uma nova entrada no histórico capturando o estado actual
+ * (após a acção). Trunca histórico futuro se estávamos no meio (depois de undo).
+ */
+function registarHistorico(tipo, descricao) {
+  // Se estamos no meio do histórico (após undos), descartar entradas futuras
+  if (historicoIdx < historico.length - 1) {
+    historico = historico.slice(0, historicoIdx + 1);
+  }
+
+  // Criar nova entrada com snapshot completo
+  const entrada = {
+    id: Date.now() + Math.random().toString(36).slice(2, 8),
+    tipo,
+    descricao,
+    timestamp: Date.now(),
+    snapshot: {
+      produtos: JSON.parse(JSON.stringify(produtosEditados)),
+      frete: JSON.parse(JSON.stringify(freteEditado)),
+    },
+  };
+
+  historico.push(entrada);
+
+  // Limitar tamanho
+  if (historico.length > HIST_MAX_ENTRIES) {
+    historico.shift();
+  }
+
+  historicoIdx = historico.length - 1;
+
+  // Persistir
+  try {
+    localStorage.setItem(ADMIN_KEY_HIST, JSON.stringify(historico));
+    localStorage.setItem(ADMIN_KEY_HIST_IDX, String(historicoIdx));
+  } catch (e) {
+    console.warn("Erro ao guardar histórico:", e);
+  }
+
+  atualizarBotoesUndoRedo();
+  atualizarBadgeHistorico();
+}
+
+function historicoUndo() {
+  if (historicoIdx < 0) return;
+  // Para fazer undo, voltamos ao estado ANTERIOR à acção actual
+  // Se estamos na entrada 0 (primeira), voltamos ao estado original (PRODUTOS/FRETE)
+  if (historicoIdx === 0) {
+    produtosEditados = clonarProdutos(PRODUTOS);
+    freteEditado = JSON.parse(JSON.stringify(FRETE));
+    historicoIdx = -1;
+  } else {
+    historicoIdx--;
+    const entrada = historico[historicoIdx];
+    produtosEditados = JSON.parse(JSON.stringify(entrada.snapshot.produtos));
+    freteEditado = JSON.parse(JSON.stringify(entrada.snapshot.frete));
+  }
+  guardarHistoricoIdx();
+  refreshUI();
+  mostrarToast("Acção desfeita");
+}
+
+function historicoRedo() {
+  if (historicoIdx >= historico.length - 1) return;
+  historicoIdx++;
+  const entrada = historico[historicoIdx];
+  produtosEditados = JSON.parse(JSON.stringify(entrada.snapshot.produtos));
+  freteEditado = JSON.parse(JSON.stringify(entrada.snapshot.frete));
+  guardarHistoricoIdx();
+  refreshUI();
+  mostrarToast("Acção refeita");
+}
+
+function reverterParaHistorico(idx) {
+  if (idx < 0 || idx >= historico.length) return;
+  abrirConfirm({
+    titulo: "Reverter ao estado deste momento?",
+    mensagem: "Todas as acções posteriores serão desfeitas, mas continuam no histórico para recuperar com 'Refazer'.",
+    btnTexto: "Sim, reverter",
+    perigo: false,
+    callback: () => {
+      historicoIdx = idx;
+      const entrada = historico[idx];
+      produtosEditados = JSON.parse(JSON.stringify(entrada.snapshot.produtos));
+      freteEditado = JSON.parse(JSON.stringify(entrada.snapshot.frete));
+      guardarHistoricoIdx();
+      refreshUI();
+      mostrarToast("Estado revertido");
+    },
+  });
+}
+
+function guardarHistoricoIdx() {
+  try {
+    localStorage.setItem(ADMIN_KEY_HIST_IDX, String(historicoIdx));
+    localStorage.setItem(ADMIN_KEY_PRODS, JSON.stringify(produtosEditados));
+    localStorage.setItem(ADMIN_KEY_FRETE, JSON.stringify(freteEditado));
+    localStorage.setItem(ADMIN_KEY_LASTSAVE, Date.now().toString());
+    temMudancas = true;
+    atualizarStatusMudancas();
+  } catch (e) {}
+}
+function refreshUI() {
+  atualizarBotoesUndoRedo();
+  renderizarTabela();
+  renderizarDashboard();
+  renderizarFrete();
+  renderizarHistorico();
+}
+
+function atualizarBotoesUndoRedo() {
+  const podeUndo = historicoIdx >= 0;
+  const podeRedo = historicoIdx < historico.length - 1;
+
+  ["btn-undo", "hist-btn-undo"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = !podeUndo;
+  });
+  ["btn-redo", "hist-btn-redo"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = !podeRedo;
+  });
+}
+
+function atualizarBadgeHistorico() {
+  const badge = document.getElementById("nav-badge-historico");
+  if (badge) badge.textContent = historico.length;
+}
+
+function renderizarHistorico() {
+  const lista = document.getElementById("historico-lista");
+  const sub = document.getElementById("historico-subtitulo");
+  if (!lista) return;
+
+  const filtroTipo = document.getElementById("filtro-hist-tipo")?.value || "";
+  const filtrado = filtroTipo
+    ? historico.filter(h => h.tipo === filtroTipo)
+    : historico;
+
+  if (sub) {
+    sub.textContent = `${historico.length} acç${historico.length === 1 ? 'ão registada' : 'ões registadas'} (mostrando ${filtrado.length})`;
+  }
+
+  if (filtrado.length === 0) {
+    lista.innerHTML = `
+      <div class="hist-vazio">
+        <span>📜</span>
+        ${historico.length === 0 ? "Nenhuma acção registada ainda. Acções como criar, editar e eliminar produtos aparecerão aqui." : "Nenhuma acção corresponde ao filtro."}
+      </div>`;
+    return;
+  }
+
+  // Reverso (mais recente primeiro)
+  const ordenado = [...filtrado].reverse();
+
+  lista.innerHTML = ordenado.map(entrada => {
+    const idxReal = historico.indexOf(entrada);
+    const tipoInfo = HIST_TIPOS[entrada.tipo] || { icone: "📌", label: "Acção" };
+    const isActual = idxReal === historicoIdx;
+    const isFutura = idxReal > historicoIdx;
+    const data = new Date(entrada.timestamp);
+    const dataFmt = formatarHistData(data);
+
+    return `
+      <div class="hist-item ${isActual ? 'hist-actual' : ''} ${isFutura ? 'hist-futura' : ''}">
+        <div class="hist-icone hist-${entrada.tipo}">${tipoInfo.icone}</div>
+        <div class="hist-info">
+          <div class="hist-titulo">${entrada.descricao}</div>
+          <div class="hist-data">
+            <span class="hist-tipo-badge">${tipoInfo.label}</span>
+            <span>${dataFmt}</span>
+          </div>
+        </div>
+        ${isActual
+          ? '<span class="hist-actual-badge">Estado actual</span>'
+          : `<div class="hist-acoes-item"><button class="hist-btn-reverter" onclick="reverterParaHistorico(${idxReal})">${isFutura ? 'Refazer até aqui' : 'Reverter'}</button></div>`
+        }
+      </div>
+    `;
+  }).join("");
+}
+
+function formatarHistData(data) {
+  const agora = new Date();
+  const diff = (agora - data) / 1000;
+
+  if (diff < 60) return "agora";
+  if (diff < 3600) return `há ${Math.floor(diff / 60)} min`;
+  if (diff < 86400) return `há ${Math.floor(diff / 3600)}h`;
+  if (diff < 604800) return `há ${Math.floor(diff / 86400)}d`;
+  return data.toLocaleDateString("pt-BR") + " " + data.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+}
+
+function limparHistorico() {
+  if (historico.length === 0) return;
+  abrirConfirm({
+    titulo: "Limpar histórico?",
+    mensagem: "Todas as entradas do histórico serão eliminadas. Não afecta os produtos nem o frete actuais.",
+    btnTexto: "Sim, limpar",
+    perigo: true,
+    callback: () => {
+      historico = [];
+      historicoIdx = -1;
+      localStorage.removeItem(ADMIN_KEY_HIST);
+      localStorage.removeItem(ADMIN_KEY_HIST_IDX);
+      atualizarBotoesUndoRedo();
+      atualizarBadgeHistorico();
+      renderizarHistorico();
+      mostrarToast("Histórico limpo");
+    },
+  });
+}
+
+
+// ════════════════════════════════════════════════════════════
+//  DRAG AND DROP — Reordenação de produtos
+// ════════════════════════════════════════════════════════════
+
+function configurarDragDrop() {
+  const linhas = document.querySelectorAll("#tbody-produtos tr[data-id]");
+
+  linhas.forEach(linha => {
+    linha.addEventListener("dragstart", e => {
+      dragId = parseInt(linha.dataset.id);
+      dragRow = linha;
+      linha.classList.add("linha-arrastando");
+      e.dataTransfer.effectAllowed = "move";
+      // Hack: definir um pequeno data para Firefox aceitar drag
+      e.dataTransfer.setData("text/plain", String(dragId));
+    });
+
+    linha.addEventListener("dragend", () => {
+      linha.classList.remove("linha-arrastando");
+      document.querySelectorAll(".linha-drop-target, .linha-drop-target-bottom").forEach(r => {
+        r.classList.remove("linha-drop-target", "linha-drop-target-bottom");
+      });
+      dragId = null;
+      dragRow = null;
+    });
+
+    linha.addEventListener("dragover", e => {
+      e.preventDefault();
+      if (!dragId || dragId === parseInt(linha.dataset.id)) return;
+
+      // Limpar markers anteriores
+      document.querySelectorAll(".linha-drop-target, .linha-drop-target-bottom").forEach(r => {
+        r.classList.remove("linha-drop-target", "linha-drop-target-bottom");
+      });
+
+      // Determinar se é em cima ou em baixo da linha
+      const rect = linha.getBoundingClientRect();
+      const meio = rect.top + rect.height / 2;
+      if (e.clientY < meio) {
+        linha.classList.add("linha-drop-target");
+      } else {
+        linha.classList.add("linha-drop-target-bottom");
+      }
+
+      e.dataTransfer.dropEffect = "move";
+    });
+
+    linha.addEventListener("drop", e => {
+      e.preventDefault();
+      if (!dragId) return;
+      const targetId = parseInt(linha.dataset.id);
+      if (dragId === targetId) return;
+
+      const rect = linha.getBoundingClientRect();
+      const meio = rect.top + rect.height / 2;
+      const inserirAntes = e.clientY < meio;
+
+      reordenarProduto(dragId, targetId, inserirAntes);
+    });
+  });
+}
+
+function reordenarProduto(idArrastado, idTarget, antes) {
+  const idxFrom = produtosEditados.findIndex(p => p.id === idArrastado);
+  let idxTo = produtosEditados.findIndex(p => p.id === idTarget);
+
+  if (idxFrom === -1 || idxTo === -1) return;
+
+  const produto = produtosEditados[idxFrom];
+  const nomeArrastado = produto.nome;
+  const nomeTarget = produtosEditados[idxTo].nome;
+
+  // Remover do original
+  produtosEditados.splice(idxFrom, 1);
+
+  // Recalcular idxTo (pode ter mudado se idxFrom < idxTo)
+  idxTo = produtosEditados.findIndex(p => p.id === idTarget);
+
+  // Inserir antes ou depois
+  produtosEditados.splice(antes ? idxTo : idxTo + 1, 0, produto);
+
+  registarHistorico("reordenar", `Moveu <strong>${escapeHTML(nomeArrastado)}</strong> ${antes ? "antes" : "depois"} de <strong>${escapeHTML(nomeTarget)}</strong>`);
+  salvarLocal();
+  renderizarTabela();
+  mostrarToast("Ordem actualizada");
+}
+
+
+// ════════════════════════════════════════════════════════════
+//  IMPORT / EXPORT — JSON e CSV
+// ════════════════════════════════════════════════════════════
+
+function abrirMenuBackup() {
+  document.getElementById("backup-overlay").classList.add("aberto");
+}
+
+function fecharBackup() {
+  document.getElementById("backup-overlay").classList.remove("aberto");
+}
+
+// ── EXPORT JSON ─────────────────────────────────────────────
+function exportarJSON() {
+  const backup = {
+    versao: "1.0",
+    timestamp: Date.now(),
+    data: new Date().toISOString(),
+    produtos: produtosEditados,
+    frete: freteEditado,
+    historico: historico,
+    historicoIdx: historicoIdx,
+  };
+
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  const dataStr = new Date().toISOString().split("T")[0];
+  a.download = `lumart-backup-${dataStr}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  mostrarToast("Backup JSON exportado");
+}
+
+// ── IMPORT JSON ─────────────────────────────────────────────
+function importarJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const dados = JSON.parse(e.target.result);
+
+      // Validar estrutura mínima
+      if (!Array.isArray(dados.produtos)) {
+        mostrarToast("Ficheiro inválido: 'produtos' não é um array");
+        return;
+      }
+
+      abrirConfirm({
+        titulo: "Importar backup?",
+        mensagem: `Vai importar:<br/>• <strong>${dados.produtos.length}</strong> produtos<br/>• Tarifas de frete (se presentes)<br/>• Histórico (${(dados.historico || []).length} entradas)<br/><br/>⚠️ <strong>Os dados actuais serão substituídos.</strong>`,
+        btnTexto: "Sim, importar",
+        perigo: true,
+        callback: () => {
+          produtosEditados = dados.produtos;
+          if (dados.frete) freteEditado = dados.frete;
+          if (Array.isArray(dados.historico)) {
+            historico = dados.historico;
+            historicoIdx = dados.historicoIdx ?? historico.length - 1;
+          }
+          registarHistorico("import", `Importou backup JSON (${dados.produtos.length} produtos)`);
+          salvarLocal();
+          inicializarPainel();
+          atualizarBadgeHistorico();
+          renderizarFrete();
+          mostrarToast("Backup importado com sucesso");
+          fecharBackup();
+        },
+      });
+    } catch (err) {
+      mostrarToast("Erro ao ler ficheiro JSON");
+      console.error(err);
+    }
+    // Reset input para permitir re-import do mesmo ficheiro
+    event.target.value = "";
+  };
+  reader.readAsText(file);
+}
+
+// ── EXPORT CSV ──────────────────────────────────────────────
+function exportarCSV() {
+  const headers = [
+    "id", "nome", "marca", "categoria", "preco", "desconto",
+    "disponibilidade", "destaque", "ativo", "descricao", "video",
+    "imagem1", "imagem2", "imagem3", "imagem4"
+  ];
+
+  const linhas = [headers.join(",")];
+
+  produtosEditados.forEach(p => {
+    const linha = [
+      p.id,
+      csvEscape(p.nome),
+      csvEscape(p.marca),
+      csvEscape(p.categoria),
+      p.preco || 0,
+      p.desconto || 0,
+      p.disponibilidade || "disponivel",
+      p.destaque ? "true" : "false",
+      p.ativo !== false ? "true" : "false",
+      csvEscape(p.descricao || ""),
+      csvEscape(p.video || ""),
+      csvEscape(p.imagens?.[0] || ""),
+      csvEscape(p.imagens?.[1] || ""),
+      csvEscape(p.imagens?.[2] || ""),
+      csvEscape(p.imagens?.[3] || ""),
+    ];
+    linhas.push(linha.join(","));
+  });
+
+  // BOM para Excel reconhecer UTF-8
+  const csv = "\uFEFF" + linhas.join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  const dataStr = new Date().toISOString().split("T")[0];
+  a.download = `lumart-produtos-${dataStr}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  mostrarToast("CSV exportado");
+}
+
+function csvEscape(valor) {
+  if (valor === null || valor === undefined) return "";
+  const str = String(valor);
+  // Se contém vírgula, aspas ou newline, envolver em aspas
+  if (/[",\n\r]/.test(str)) {
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+  return str;
+}
+
+// ── IMPORT CSV ──────────────────────────────────────────────
+function importarCSV(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const texto = e.target.result;
+      const linhas = parseCSV(texto);
+
+      if (linhas.length < 2) {
+        mostrarToast("CSV vazio ou sem dados");
+        return;
+      }
+
+      const headers = linhas[0].map(h => h.trim().toLowerCase());
+      const dadosCSV = linhas.slice(1);
+
+      // Verificar campos obrigatórios
+      const obrigatorios = ["id", "nome", "marca", "categoria", "preco"];
+      const faltam = obrigatorios.filter(c => !headers.includes(c));
+      if (faltam.length > 0) {
+        mostrarToast(`CSV inválido — faltam colunas: ${faltam.join(", ")}`);
+        return;
+      }
+
+      // Construir produtos importados (preservando reviews dos existentes)
+      const produtosNovos = dadosCSV
+        .filter(linha => linha.some(c => c.trim()))
+        .map(linha => {
+          const obj = {};
+          headers.forEach((h, i) => obj[h] = linha[i] || "");
+
+          const id = parseInt(obj.id) || gerarNovoId();
+          const existente = produtosEditados.find(p => p.id === id);
+
+          return {
+            id,
+            nome: obj.nome.trim(),
+            marca: obj.marca.trim(),
+            categoria: obj.categoria.trim(),
+            preco: parseFloat(obj.preco) || 0,
+            desconto: parseFloat(obj.desconto) || 0,
+            disponibilidade: obj.disponibilidade?.trim() || "disponivel",
+            destaque: obj.destaque?.toLowerCase() === "true",
+            ativo: obj.ativo?.toLowerCase() !== "false",
+            descricao: (obj.descricao || "").trim(),
+            video: (obj.video || "").trim(),
+            imagens: [
+              (obj.imagem1 || "").trim(),
+              (obj.imagem2 || "").trim(),
+              (obj.imagem3 || "").trim(),
+              (obj.imagem4 || "").trim(),
+            ],
+            reviews: existente?.reviews || [],
+          };
+        });
+
+      abrirConfirm({
+        titulo: "Importar CSV?",
+        mensagem: `Vai importar <strong>${produtosNovos.length}</strong> produtos.<br/><br/>⚠️ <strong>Os produtos actuais serão substituídos</strong> (as reviews dos produtos com mesmo ID serão preservadas).<br/><br/>O frete e o histórico não são afectados.`,
+        btnTexto: "Sim, importar",
+        perigo: true,
+        callback: () => {
+          produtosEditados = produtosNovos;
+          registarHistorico("import", `Importou CSV (${produtosNovos.length} produtos)`);
+          salvarLocal();
+          inicializarPainel();
+          mostrarToast(`${produtosNovos.length} produtos importados`);
+          fecharBackup();
+        },
+      });
+    } catch (err) {
+      mostrarToast("Erro ao ler CSV");
+      console.error(err);
+    }
+    event.target.value = "";
+  };
+  reader.readAsText(file);
+  }    
+
+/**
+ * Parser CSV que respeita aspas, vírgulas escapadas, etc.
+ */
+function parseCSV(texto) {
+  // Remover BOM se presente
+  if (texto.charCodeAt(0) === 0xFEFF) texto = texto.slice(1);
+
+  const linhas = [];
+  let linhaActual = [];
+  let campoActual = "";
+  let dentroAspas = false;
+
+  for (let i = 0; i < texto.length; i++) {
+    const c = texto[i];
+    const seguinte = texto[i + 1];
+
+    if (dentroAspas) {
+      if (c === '"' && seguinte === '"') {
+        campoActual += '"';
+        i++;
+      } else if (c === '"') {
+        dentroAspas = false;
+      } else {
+        campoActual += c;
+      }
+    } else {
+      if (c === '"') {
+        dentroAspas = true;
+      } else if (c === ',') {
+        linhaActual.push(campoActual);
+        campoActual = "";
+      } else if (c === '\n' || c === '\r') {
+        if (campoActual !== "" || linhaActual.length > 0) {
+          linhaActual.push(campoActual);
+          linhas.push(linhaActual);
+        }
+        linhaActual = [];
+        campoActual = "";
+        // Skip \r\n
+        if (c === '\r' && seguinte === '\n') i++;
+      } else {
+        campoActual += c;
+      }
+    }
+  }
+
+  // Última linha (se não termina com newline)
+  if (campoActual !== "" || linhaActual.length > 0) {
+    linhaActual.push(campoActual);
+    linhas.push(linhaActual);
+  }
+
+  return linhas;
+}
+
+
+// ════════════════════════════════════════════════════════════
+//  AJUDA / ATALHOS
+// ════════════════════════════════════════════════════════════
+
+function mostrarAjuda() {
+  document.getElementById("ajuda-overlay").classList.add("aberto");
+}
+
+function fecharAjuda() {
+  document.getElementById("ajuda-overlay").classList.remove("aberto");
+}
+
+
+// ════════════════════════════════════════════════════════════
+//  ATALHOS DE TECLADO
+// ════════════════════════════════════════════════════════════
+
+let teclaG = false; // estado para combos como "G + D"
+let timeoutG = null;
+
+document.addEventListener("keydown", e => {
+  // Ignorar atalhos quando user está a escrever em campos de texto
+  const noInput = ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName);
+  const ctrlOuCmd = e.ctrlKey || e.metaKey;
+
+  // ── Atalhos com Ctrl/Cmd ────────────────────────────────
+  if (ctrlOuCmd && e.key.toLowerCase() === "s") {
+    e.preventDefault();
+    if (estaAutenticado()) exportarProdutos();
+    return;
+  }
+  if (ctrlOuCmd && e.key.toLowerCase() === "n") {
+    e.preventDefault();
+    if (estaAutenticado()) novoProduto();
+    return;
+  }
+  if (ctrlOuCmd && e.key.toLowerCase() === "b") {
+    e.preventDefault();
+    if (estaAutenticado()) abrirMenuBackup();
+    return;
+  }
+  if (ctrlOuCmd && e.shiftKey && e.key.toLowerCase() === "z") {
+    e.preventDefault();
+    if (estaAutenticado()) historicoRedo();
+    return;
+  }
+  if (ctrlOuCmd && e.key.toLowerCase() === "y") {
+    e.preventDefault();
+    if (estaAutenticado()) historicoRedo();
+    return;
+  }
+  if (ctrlOuCmd && e.key.toLowerCase() === "z") {
+    e.preventDefault();
+    if (estaAutenticado()) historicoUndo();
+    return;
+  }
+  if (ctrlOuCmd && e.key.toLowerCase() === "f") {
+    e.preventDefault();
+    if (estaAutenticado()) {
+      mudarTab("produtos");
+      setTimeout(() => document.getElementById("filtro-busca")?.focus(), 50);
+    }
+    return;
+  }
+  if (ctrlOuCmd && e.key.toLowerCase() === "e") {
+    e.preventDefault();
+    if (estaAutenticado() && produtosSelecionados.size > 0) {
+      const primeiro = [...produtosSelecionados][0];
+      editarProduto(primeiro);
+    }
+    return;
+  }
+  if (ctrlOuCmd && e.key.toLowerCase() === "d") {
+    e.preventDefault();
+    if (estaAutenticado() && produtosSelecionados.size > 0) {
+      const primeiro = [...produtosSelecionados][0];
+      duplicarProduto(primeiro);
+    }
+    return;
+  }
+
+  // ── Atalho ? para ajuda ────────────────────────────────
+  if (!noInput && e.key === "?") {
+    e.preventDefault();
+    if (estaAutenticado()) mostrarAjuda();
+    return;
+  }
+
+  // ── ESC fecha modais ───────────────────────────────────
+  if (e.key === "Escape") {
+    if (document.getElementById("ajuda-overlay")?.classList.contains("aberto")) {
+      fecharAjuda();
+    } else if (document.getElementById("backup-overlay")?.classList.contains("aberto")) {
+      fecharBackup();
+    } else if (document.getElementById("preview-completo-overlay")?.classList.contains("aberto")) {
+      fecharPreviewCompleto();
+    } else if (document.getElementById("review-overlay")?.classList.contains("aberto")) {
+      fecharReviewEditor();
+    } else if (document.getElementById("editor-overlay")?.classList.contains("aberto")) {
+      fecharEditor();
+    } else if (document.getElementById("confirm-overlay")?.classList.contains("aberto")) {
+      confirmCancelar();
+    } else if (document.getElementById("prompt-overlay")?.classList.contains("aberto")) {
+      promptCancelar();
+    }
+    return;
+  }
+
+  // ── Atalhos G + tecla (estilo Vim/Gmail) ───────────────
+  if (!noInput && !ctrlOuCmd && estaAutenticado()) {
+    if (e.key.toLowerCase() === "g" && !teclaG) {
+      teclaG = true;
+      clearTimeout(timeoutG);
+      timeoutG = setTimeout(() => { teclaG = false; }, 1500);
+      return;
+    }
+    if (teclaG) {
+      teclaG = false;
+      clearTimeout(timeoutG);
+      const k = e.key.toLowerCase();
+      if (k === "d") { mudarTab("dashboard"); return; }
+      if (k === "p") { mudarTab("produtos"); return; }
+      if (k === "f") { mudarTab("frete"); return; }
+      if (k === "h") { mudarTab("historico"); return; }
+    }
+  }
+});
+
+
+// ════════════════════════════════════════════════════════════
+//  INICIALIZAÇÃO
+// ════════════════════════════════════════════════════════════
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Carregar tema imediatamente (antes de qualquer outra coisa)
+  carregarTema();
+
+  if (!temPasswordDefinida()) {
+    document.getElementById("auth-setup").style.display = "block";
+    document.getElementById("auth-login").style.display = "none";
+    setTimeout(() => document.getElementById("setup-pass")?.focus(), 200);
+  } else if (!estaAutenticado()) {
+    document.getElementById("auth-setup").style.display = "none";
+    document.getElementById("auth-login").style.display = "block";
+    setTimeout(() => document.getElementById("login-pass")?.focus(), 200);
+  } else {
+    entrarPainel();
+  }
+});
+      
+                    
+  
 
         
