@@ -86,8 +86,8 @@ const MODAIS_CONTEUDO = {
             <p>Após enviar, recebe um PDF profissional e abre o WhatsApp com a mensagem pré-preenchida para a nossa equipa.</p>
           </li>
           <li>
-            <strong>Confirme com o sinal e receba em casa</strong>
-            <p>Pague o sinal (60% para produtos em stock, 75% para produtos sob encomenda + frete) e o restante na entrega.</p>
+            <strong>Confirme o pagamento e receba em casa</strong>
+            <p>Pague 100% dos produtos em stock (ou 75% como sinal para produtos sob encomenda) acrescido do frete. Para produtos sob encomenda, paga os restantes 25% na entrega.</p>
           </li>
         </ol>
 
@@ -199,9 +199,10 @@ const MODAIS_CONTEUDO = {
 
         <h4>1. Sobre os pedidos</h4>
         <p>
-          Os pedidos só são confirmados após o pagamento do sinal (60% para produtos em stock,
-          75% para produtos sob encomenda) acrescido do valor total do frete. As cotações têm
-          validade de <strong>7 dias</strong> a contar da data de emissão.
+          Os pedidos só são confirmados após o pagamento de <strong>100% do valor</strong> dos produtos
+          em stock (ou <strong>75% como sinal</strong> para produtos sob encomenda) acrescido do
+          valor total do frete. As cotações têm validade de <strong>7 dias</strong> a contar da data
+          de emissão.
         </p>
 
         <h4>2. Preços e formas de pagamento</h4>
@@ -266,11 +267,12 @@ const MODAIS_CONTEUDO = {
           </details>
 
           <details class="faq-item">
-            <summary>Porque é que tenho de pagar uma parte adiantada?</summary>
+            <summary>Porque é que tenho de pagar adiantado?</summary>
             <p>
-              O sinal (60% para stock, 75% para sob encomenda) cobre os custos iniciais — transporte, importação,
-              embalagem. Como não temos uma loja física com showroom, este modelo permite-nos oferecer preços muito
-              mais baixos que a concorrência tradicional.
+              Para produtos <strong>em stock</strong>, o pagamento de 100% no momento do pedido garante o
+              produto e permite-nos preparar a entrega imediatamente. Para produtos <strong>sob encomenda</strong>,
+              o sinal de 75% cobre os custos iniciais de importação. Como não temos uma loja física com showroom,
+              este modelo permite-nos oferecer preços muito mais baixos que a concorrência tradicional.
             </p>
           </details>
 
@@ -411,8 +413,8 @@ const MODAIS_CONTEUDO = {
             <p>After submitting, you receive a professional PDF and WhatsApp opens with the message pre-filled for our team.</p>
           </li>
           <li>
-            <strong>Confirm with the deposit and receive at home</strong>
-            <p>Pay the deposit (60% for in-stock products, 75% for pre-order products + shipping) and the balance on delivery.</p>
+            <strong>Confirm payment and receive at home</strong>
+            <p>Pay 100% for in-stock products (or 75% as a deposit for pre-order products) plus shipping. For pre-order products, you pay the remaining 25% on delivery.</p>
           </li>
         </ol>
 
@@ -524,9 +526,9 @@ const MODAIS_CONTEUDO = {
 
         <h4>1. About orders</h4>
         <p>
-          Orders are only confirmed after payment of the deposit (60% for in-stock products,
-          75% for pre-order products) plus the full shipping value. Quotes are valid for
-          <strong>7 days</strong> from the date of issue.
+          Orders are only confirmed after payment of <strong>100%</strong> for in-stock products
+          (or <strong>75% as a deposit</strong> for pre-order products) plus the full shipping value.
+          Quotes are valid for <strong>7 days</strong> from the date of issue.
         </p>
 
         <h4>2. Prices and payment methods</h4>
@@ -591,11 +593,12 @@ const MODAIS_CONTEUDO = {
           </details>
 
           <details class="faq-item">
-            <summary>Why do I have to pay a part upfront?</summary>
+            <summary>Why do I have to pay upfront?</summary>
             <p>
-              The deposit (60% for stock, 75% for pre-order) covers the initial costs — transport, import,
-              packaging. Since we don't have a physical showroom, this model lets us offer prices well
-              below traditional competitors.
+              For <strong>in-stock</strong> products, paying 100% at the time of order secures the product
+              and allows us to prepare delivery immediately. For <strong>pre-order</strong> products,
+              the 75% deposit covers the initial import costs. Since we don't have a physical showroom,
+              this model lets us offer prices well below traditional competitors.
             </p>
           </details>
 
