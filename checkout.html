@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d0c10" />
+
+  <title>Finalizar Cotação · Lumart Comercial</title>
+  <meta name="description" content="Finalize a sua cotação Lumart. Endereço de entrega, cálculo automático de frete para Moçambique e África do Sul." />
+  <meta name="robots" content="noindex, nofollow" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Finalizar Cotação · Lumart Comercial" />
+  <meta property="og:site_name" content="Lumart Comercial" />
+  <meta property="og:locale" content="pt_MZ" />
+
+  <!-- PWA — Progressive Web App (Fase 10) -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0d0c10" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Lumart" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..700,0..1,-50..200&display=block" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- ANNOUNCEMENT BAR -->
+<div class="announcement-bar" aria-hidden="true">
+  <div class="announcement-track">
+    <span>Entrega em <b>Moçambique</b> e <b>África do Sul</b></span>
+    <span>·</span>
+    <span>Pagamento <b>parcelado</b> · sinal + restante na entrega</span>
+    <span>·</span>
+    <span>Cotação processada em <b>até 48h</b></span>
+    <span>·</span>
+    <span>Entrega em <b>Moçambique</b> e <b>África do Sul</b></span>
+    <span>·</span>
+    <span>Pagamento <b>parcelado</b> · sinal + restante na entrega</span>
+    <span>·</span>
+    <span>Cotação processada em <b>até 48h</b></span>
+    <span>·</span>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="header" id="header">
+  <nav class="nav">
+    <a class="nav-logo" href="index.html">Lu<em>mart</em></a>
+    <div class="nav-center">
+      <a class="nav-link" href="index.html" data-i18n="header.catalogo">Catálogo</a>
+      <a class="nav-link ativo" href="checkout.html" data-i18n="header.cotacao">Cotação</a>
+    </div>
+    <div class="nav-acoes">
+      <div class="lang-switcher" role="group" aria-label="Idioma">
+        <button class="btn-lang" data-lang="pt" onclick="setLang('pt')" aria-label="Português">PT</button>
+        <button class="btn-lang" data-lang="en" onclick="setLang('en')" aria-label="English">EN</button>
+      </div>
+      <button class="btn-wishlist" id="btn-wishlist-main" onclick="abrirWishlist()" data-i18n-aria-label="header.abrir_favoritos" aria-label="Abrir favoritos">
+        <span class="lmi lmi-sm" aria-hidden="true">favorite_border</span>
+        <span class="wishlist-badge" id="badge-wishlist">0</span>
+      </button>
+      <button class="btn-cart" id="btn-cart-main" onclick="abrirCarrinho()" data-i18n-aria-label="header.abrir_carrinho" aria-label="Abrir carrinho">
+        <span class="lmi lmi-sm" aria-hidden="true">shopping_bag</span>
+        <span class="cart-badge" id="badge-carrinho">0</span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<!-- ════════════════════════════════════════════════════════════
+     CHECKOUT
+════════════════════════════════════════════════════════════ -->
+<main class="checkout-page">
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb-wrap">
+    <div class="breadcrumb">
+      <a href="index.html" data-i18n="header.catalogo">Catálogo</a>
+      <span class="bc-sep">›</span>
+      <span class="bc-current" data-i18n="checkout.titulo">Finalizar Cotação</span>
+    </div>
+  </nav>
+
+  <!-- Container -->
+  <div class="checkout-container">
+
+    <!-- Cabeçalho -->
+    <div class="checkout-header reveal">
+      <h1 class="checkout-titulo"><span data-i18n="checkout.titulo_l1">Finalizar</span><br/><em data-i18n="checkout.titulo_l2">cotação</em></h1>
+      <p class="checkout-subtitulo" data-i18n="checkout.subtitulo">Preencha os seus dados e o endereço de entrega para gerar a sua cotação personalizada.</p>
+      <div class="checkout-passos">
+        <div class="passo passo-feito">
+          <span class="passo-num">1</span>
+          <span class="passo-label" data-i18n="checkout.passo_carrinho">Carrinho</span>
+        </div>
+        <div class="passo-linha"></div>
+        <div class="passo passo-actual">
+          <span class="passo-num">2</span>
+          <span class="passo-label" data-i18n="checkout.passo_endereco">Endereço</span>
+        </div>
+        <div class="passo-linha"></div>
+        <div class="passo">
+          <span class="passo-num">3</span>
+          <span class="passo-label" data-i18n="checkout.passo_confirmar">Confirmar</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layout 2 colunas -->
+    <div class="checkout-layout">
+
+      <!-- Coluna esquerda: Formulário -->
+      <div class="checkout-form-col">
+
+        <!-- Bloco: Dados pessoais -->
+        <div class="bloco-form reveal">
+          <div class="bloco-header">
+            <div class="bloco-icon">👤</div>
+            <span class="bloco-titulo" data-i18n="checkout.bloco_dados">Seus Dados</span>
+          </div>
+          <div class="bloco-body">
+            <div class="campo">
+              <label for="input-nome" data-i18n="checkout.nome">Nome Completo</label>
+              <input type="text" id="input-nome" data-i18n-placeholder="checkout.nome_placeholder" placeholder="Ex: Maria da Silva" autocomplete="name" />
+            </div>
+            <div class="campo">
+              <label for="input-telefone" data-i18n="checkout.telefone">WhatsApp / Telefone</label>
+              <input type="tel" id="input-telefone" data-i18n-placeholder="checkout.telefone_placeholder" placeholder="+258 84 000 0000" autocomplete="tel" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco: Endereço de entrega -->
+        <div class="bloco-form reveal">
+          <div class="bloco-header">
+            <div class="bloco-icon">📍</div>
+            <span class="bloco-titulo" data-i18n="checkout.bloco_entrega">Endereço de Entrega</span>
+          </div>
+          <div class="bloco-body">
+
+            <div class="campo-grid">
+              <div class="campo">
+                <label for="input-pais" data-i18n="checkout.pais">País</label>
+                <select id="input-pais" class="select"></select>
+              </div>
+              <div class="campo">
+                <label for="input-provincia" data-i18n="checkout.provincia">Província / Distrito</label>
+                <select id="input-provincia" class="select" disabled>
+                  <option value="" data-i18n="checkout.provincia_placeholder">— Selecione primeiro o país —</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="campo-grid">
+              <div class="campo">
+                <label for="input-cidade" data-i18n="checkout.cidade">Cidade</label>
+                <input type="text" id="input-cidade" placeholder="Ex: Maputo" autocomplete="address-level2" />
+              </div>
+              <div class="campo">
+                <label for="input-bairro" data-i18n="checkout.bairro">Bairro</label>
+                <input type="text" id="input-bairro" placeholder="Ex: Polana, Alto Maé" />
+              </div>
+            </div>
+
+            <div class="campo">
+              <label for="input-referencia"><span data-i18n="checkout.referencia">Referência</span> <span class="campo-opcional" data-i18n="comum.opcional">(opcional)</span></label>
+              <input type="text" id="input-referencia" data-i18n-placeholder="checkout.referencia_placeholder" placeholder="Ex: Em frente à farmácia X, casa amarela" />
+            </div>
+
+            <div class="campo">
+              <label for="input-obs"><span data-i18n="checkout.bloco_observacoes">Observações</span> <span class="campo-opcional" data-i18n="comum.opcional">(opcional)</span></label>
+              <textarea id="input-obs" data-i18n-placeholder="checkout.observacoes_placeholder" placeholder="Instruções especiais, prazos preferidos…"></textarea>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Coluna direita: Resumo -->
+      <aside class="checkout-resumo-col">
+        <div class="resumo-sticky reveal">
+
+          <div class="resumo-box">
+            <div class="resumo-header">
+              <span class="resumo-titulo" data-i18n="checkout.resumo_titulo">Resumo do Pedido</span>
+              <a href="index.html" class="resumo-editar" data-i18n="checkout.editar">Editar</a>
+            </div>
+
+            <div class="resumo-lista" id="resumo-lista"></div>
+
+            <div class="resumo-divider"></div>
+
+            <!-- Subtotal -->
+            <div class="resumo-linha">
+              <span class="linha-label" data-i18n="checkout.subtotal">Subtotal</span>
+              <span class="linha-valor" id="valor-subtotal">MZN 0,00</span>
+            </div>
+
+            <!-- Frete -->
+            <div class="resumo-linha resumo-frete" id="linha-frete">
+              <div class="linha-frete-info">
+                <span class="linha-label" data-i18n="checkout.frete">Frete</span>
+                <span class="linha-detalhe" id="frete-descricao" data-i18n="checkout.frete_calcular">Selecione o endereço de entrega para calcular</span>
+              </div>
+              <span class="linha-valor" id="valor-frete">—</span>
+            </div>
+
+            <div class="resumo-divider"></div>
+
+            <!-- Total -->
+            <div class="resumo-total-row">
+              <span class="resumo-total-label" data-i18n="checkout.total">Total</span>
+              <span class="resumo-total-valor" id="valor-total">MZN 0,00</span>
+            </div>
+          </div>
+
+          <!-- Caixa de pagamento -->
+          <div class="caixa-pagamento">
+            <div class="pag-bloco">
+              <span class="pag-label" data-i18n="checkout.sinal">A pagar agora (sinal)</span>
+              <span class="pag-valor pag-destaque" id="valor-sinal">MZN 0,00</span>
+            </div>
+            <div class="pag-divider"></div>
+            <div class="pag-bloco">
+              <span class="pag-label" data-i18n="checkout.restante">A pagar na entrega</span>
+              <span class="pag-valor" id="valor-restante">MZN 0,00</span>
+            </div>
+          </div>
+
+          <!-- Equivalente em ZAR (visível só se cliente é de África do Sul) -->
+          <div class="bloco-cambio-zar" id="bloco-cambio-zar" aria-live="polite"></div>
+
+          <!-- Caixa de prazo -->
+          <div class="caixa-prazo" id="bloco-prazo">
+            <div class="prazo-icon">
+              <span class="lmi lmi-lg" aria-hidden="true">schedule</span>
+            </div>
+            <div class="prazo-info">
+              <span class="prazo-eyebrow" data-i18n="checkout.prazo_eyebrow">Entrega estimada</span>
+              <span class="prazo-texto" id="prazo-texto">—</span>
+              <span class="prazo-detalhe" id="prazo-detalhe"></span>
+            </div>
+          </div>
+
+          <!-- Termos -->
+          <div class="caixa-termos">
+            <span class="termos-titulo" data-i18n="checkout.termos_titulo">Termos de pagamento</span>
+            <ul id="termos-pagamento"></ul>
+          </div>
+
+          <!-- Aviso de mínimo de cotação (se aplicável) -->
+          <div class="aviso-minimo" id="aviso-minimo-checkout" role="alert"></div>
+
+          <!-- Botões -->
+          <div class="checkout-botoes">
+            <button class="btn-whatsapp btn-cta" onclick="acaoCheckoutWhatsApp()">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.535 5.859L0 24l6.335-1.511C8.05 23.452 9.99 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+              <span data-i18n="checkout.btn_whatsapp_full">Enviar no WhatsApp</span>
+            </button>
+            <button class="btn-pdf btn-cta" onclick="acaoCheckoutPDF()">
+              <span class="lmi lmi-sm" aria-hidden="true">picture_as_pdf</span>
+              <span data-i18n="checkout.btn_pdf">Baixar PDF</span>
+            </button>
+          </div>
+
+          <p class="checkout-info-pequena" data-i18n="checkout.info_envio">
+            Ao enviar, irá receber o PDF da cotação e abrir o WhatsApp com a mensagem pronta.
+          </p>
+
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- DRAWER DO CARRINHO -->
+<div class="drawer-overlay" id="modal-carrinho" onclick="fecharCarrinhoOverlay(event)">
+  <div class="drawer">
+    <div class="drawer-header">
+      <span class="drawer-titulo">
+        <span data-i18n="carrinho.titulo">A sua cotação</span>
+        <span class="drawer-titulo-count" id="drawer-count">0</span>
+      </span>
+      <button class="btn-fechar-drawer" onclick="fecharCarrinho()" data-i18n-aria-label="comum.fechar" aria-label="Fechar">
+        <span class="lmi lmi-sm" aria-hidden="true">close</span>
+      </button>
+    </div>
+    <div class="drawer-body" id="lista-carrinho"></div>
+    <div class="drawer-footer">
+      <div class="aviso-minimo" id="aviso-minimo-cart" role="alert"></div>
+      <div class="drawer-total">
+        <span class="drawer-total-label" data-i18n="carrinho.total_parcial">Total parcial</span>
+        <span class="drawer-total-valor" id="total-carrinho">MZN 0,00</span>
+      </div>
+      <button class="btn-checkout" onclick="fecharCarrinho()">
+        <span data-i18n="carrinho.fechar_continuar">Fechar e continuar</span>
+        <span class="btn-checkout-arrow">→</span>
+      </button>
+      <button class="btn-limpar" onclick="confirmarLimpar()" data-i18n="carrinho.limpar">Limpar carrinho</button>
+      <p class="drawer-termos" data-i18n="carrinho.termos">Preços em MZN · Em stock: 60% / 40% · Sob encomenda: 75% / 25%</p>
+    </div>
+  </div>
+</div>
+
+<!-- Drawer Wishlist (Fase 8C) -->
+<div class="drawer-overlay" id="modal-wishlist" onclick="fecharWishlistOverlay(event)">
+  <div class="drawer drawer-wishlist">
+    <div class="drawer-header">
+      <span class="drawer-titulo">
+        <span class="lmi lmi-sm" aria-hidden="true">favorite</span>
+        <span data-i18n="wishlist.titulo">Os meus favoritos</span>
+        <span class="drawer-titulo-count" id="drawer-count-wishlist">0</span>
+      </span>
+      <button class="btn-fechar-drawer" onclick="fecharWishlist()" data-i18n-aria-label="comum.fechar" aria-label="Fechar">
+        <span class="lmi lmi-sm" aria-hidden="true">close</span>
+      </button>
+    </div>
+    <div class="drawer-body" id="lista-wishlist"></div>
+    <div class="drawer-footer" id="wishlist-footer" style="display:none">
+      <p class="drawer-termos" data-i18n="wishlist.footer_termos">Adicione qualquer favorito à cotação para continuar.</p>
+      <button class="btn-limpar" onclick="confirmarLimparWishlist()" data-i18n="wishlist.limpar">Limpar favoritos</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<!-- SCRIPTS -->
+<script src="i18n.js"></script>
+<script src="produtos.js"></script>
+<script src="carrinho.js"></script>
+<script src="wishlist.js"></script>
+<script src="pdf.js"></script>
+<script src="checkout.js"></script>
+<script src="politicas.js"></script>
+<script src="componentes.js"></script>
+
+<script>
+// Custom cursor
+(function() {
+  const cur  = document.getElementById("cursor");
+  const ring = document.getElementById("cursor-ring");
+  if (!cur || !ring) return;
+  let rx = 0, ry = 0, mx = 0, my = 0;
+  document.addEventListener("mousemove", e => { mx = e.clientX; my = e.clientY; cur.style.left = mx + "px"; cur.style.top = my + "px"; });
+  (function lerp() {
+    rx += (mx - rx) * .12; ry += (my - ry) * .12;
+    ring.style.left = rx + "px"; ring.style.top = ry + "px";
+    requestAnimationFrame(lerp);
+  })();
+})();
+
+// Header scroll
+window.addEventListener("scroll", () => {
+  document.getElementById("header")?.classList.toggle("scrolled", window.scrollY > 10);
+}, { passive: true });
+
+// Drawer helpers
+function fecharCarrinhoOverlay(e) {
+  if (e.target === document.getElementById("modal-carrinho")) fecharCarrinho();
+}
+function confirmarLimpar() {
+  if (carrinho.length === 0) return;
+  if (confirm("Remover todos os produtos da cotação?")) {
+    limparCarrinho();
+    renderizarDrawer();
+    renderizarResumo();
+    setTimeout(() => window.location.href = "index.html", 600);
+  }
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape") fecharCarrinho(); });
+
+// Pulse no btn-cart
+const styleEl = document.createElement("style");
+styleEl.textContent = `
+  @keyframes cartPulse { 0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.5)} 40%{box-shadow:0 0 0 8px rgba(212,175,55,0)} }
+  .btn-cart.pulse { animation: cartPulse .4s ease-out; }
+`;
+document.head.appendChild(styleEl);
+</script>
+
+</body>
+</html>

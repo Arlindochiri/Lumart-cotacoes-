@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://lumartcomercial.com/</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://lumartcomercial.com/produto.html?id=1</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800&amp;q=85</image:loc>
+      <image:title>Estojo Aquarela Profissional 24 Cores</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://lumartcomercial.com/produto.html?id=2</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&amp;q=85</image:loc>
+      <image:title>Kit Pincéis Sintéticos Marta 5 Peças</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://lumartcomercial.com/produto.html?id=3</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&amp;q=85</image:loc>
+      <image:title>Tela Painel Algodão 50×70cm</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://lumartcomercial.com/produto.html?id=4</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1580748141549-71748dbe0bdc?w=800&amp;q=85</image:loc>
+      <image:title>Tinta Óleo Clássica 37ml — Branco Titânio</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://lumartcomercial.com/produto.html?id=5</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&amp;q=85</image:loc>
+      <image:title>Sketchbook Artbook One 100g 100 Folhas</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://lumartcomercial.com/produto.html?id=6</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800&amp;q=85</image:loc>
+      <image:title>Cavalete Estúdio Trident Modelo 120</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://lumartcomercial.com/produto.html?id=7</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1604147706283-d7119b5b822c?w=800&amp;q=85</image:loc>
+      <image:title>Conjunto Pastéis Secos Soft 48 Cores</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://lumartcomercial.com/produto.html?id=8</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=800&amp;q=85</image:loc>
+      <image:title>Papel Aquarela Algodão 300g A3 — 10 Folhas</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://lumartcomercial.com/produto.html?id=9</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1615529162924-f8605388461d?w=800&amp;q=85</image:loc>
+      <image:title>Medium &amp; Verniz Gloss 250ml</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://lumartcomercial.com/produto.html?id=10</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800&amp;q=85</image:loc>
+      <image:title>Lápis Aquareláveis 36 Cores</image:title>
+    </image:image>
+  </url>
+</urlset>
